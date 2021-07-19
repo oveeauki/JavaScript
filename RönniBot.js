@@ -20,6 +20,7 @@ console.log(
 'Rönni sanoo : \033[34m['+ oneliners.fraasit[Randomi]+']\n\033[0m'+
 '----------------------------------------------------------------');
 });
+
 /************************************************************************************/
 
 client.on('message', async message => {
@@ -29,6 +30,13 @@ files:[
 'https://cdn.discordapp.com/attachments/343890302781620226/863565315736207370/unknown.png'
 ]
 }).then(console.log).catch(console.error);
+}
+
+if(message.channel.type === 'dm' && message.author.id === '300648311067508754'){
+const lastmsgusr = message.channel.lastMessage.author.username
+console.log(`${message.author.username} Sent a message : [${message.content}]`)
+await client.users.cache.get(`${message.channel.lastMessage.author.id}`).send(oneliners.fraasit[Math.floor(Math.random()*6)])
+console.log(`Röndelssi Sent [${client.user.lastMessage.content}] To [${lastmsgusr}]`)      
 }
 
 if(message.content === 'jeee' && message.author.id === '300648311067508754'){
@@ -44,8 +52,8 @@ message.channel.send(emojit.aaro)
 }
 
 if(message.content === 'moi rönni' && message.author.id == '300648311067508754'){
-for(var i =0;i<10;i++){
-message.channel.send(röndelsoneliners.fraasit[Math.floor(Math.random()*6)])
+for(var i =0;i<5;i++){
+(await client.users.fetch('300648311067508754')).send('staattinenpitkätupla')
 }
 }
 
@@ -80,6 +88,12 @@ else if(message.content === 'kanko'){
 await client.user.setUsername('Kanko')
 message.channel.send('Nyt oon kanko!\nNäin.')
 console.log("Rönnin Nickki vaihtu nickkiin : ["+client.user.username+"]")
+}
+
+/************************************************************************************/ 
+
+if(message.content === '2'){
+console.log(Number.isInteger(a))
 }
 });
 
