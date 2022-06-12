@@ -18,7 +18,6 @@ class apicall {
 constructor(inputdata){
 this.inpdata = inputdata;
 }
-
 async response(){
 const response = openai.createCompletion({
   model: "text-davinci-002",
