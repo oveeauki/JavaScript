@@ -12,9 +12,8 @@
 npm install
 ```
 
-<br>
 
-## **In the field of the response property i used ReadLine module for simple user input**
+* ### **In the field of the response property i used ReadLine module for simple user input**
 ```js
 const response = openai.createCompletion({
   model: "text-davinci-002",
