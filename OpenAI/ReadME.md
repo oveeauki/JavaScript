@@ -1,14 +1,17 @@
-# **OpenAI Testing**
+# **OpenAI Sample API interface**
+* ### For more information goto [OpenAI Docs](https://beta.openai.com/docs/introduction)
+
+<img src="https://openai.com/content/images/2022/05/twitter-1.png" style="width:560px;height:300px;"/>
+
+## **installation**
 
 
-## **Installing** <br>
-<br>
+### **cd into the OpenAI Dir and run**
 
-
-* ## **cd into the OpenAI Dir and run**
 ``` 
 npm install
 ```
+
 <br>
 
 ## **In the field of the response property i used ReadLine module for simple user input**
@@ -28,15 +31,3 @@ const conf = new Configuration({
 apiKey:"<Key here>"
 });
 ```
-
-* ### For more information goto [OpenAI Docs](https://beta.openai.com/docs/introduction)
-
-<body>
-<style>
-#jeesus{
-width:560px;height:300px;
-}
-</style>
-</body>
-
-<img src="https://openai.com/content/images/2022/05/twitter-1.png" id="jeesus"/>
