@@ -6,7 +6,7 @@
 ## **Installation**
 
 
-### **cd into the OpenAI Dir and run**
+* ### **cd into the OpenAI Dir and run**
 
 ``` 
 npm install
