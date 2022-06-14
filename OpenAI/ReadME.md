@@ -11,7 +11,7 @@ npm install
 ```
 <br>
 
-* ## **In the field of the response property i used ReadLine module for simple user input**
+## **In the field of the response property i used ReadLine module for simple user input**
 ```js
 const response = openai.createCompletion({
   model: "text-davinci-002",
@@ -31,10 +31,12 @@ apiKey:"<Key here>"
 
 * ### For more information goto [OpenAI Docs](https://beta.openai.com/docs/introduction)
 
+<body>
 <style>
 #jeesus{
 width:560px;height:300px;
 }
 </style>
+</body>
 
 <img src="https://openai.com/content/images/2022/05/twitter-1.png" id="jeesus"/>
