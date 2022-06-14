@@ -3,7 +3,7 @@
 
 <img src="https://openai.com/content/images/2022/05/twitter-1.png" style="width:560px;height:300px;"/>
 
-## **installation**
+## **Installation**
 
 
 ### **cd into the OpenAI Dir and run**
