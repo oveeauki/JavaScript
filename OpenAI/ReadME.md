@@ -6,7 +6,8 @@
 ## **Installation**
 
 
-* ### **cd into the OpenAI Dir and run**
+* ### **git clone this =>** (https://github.com/oveeauki/JavaScript/OpenAI.git)
+* ### **Then cd into the repo and do**
 
 ``` 
 npm install
@@ -14,6 +15,7 @@ npm install
 
 
 * ### **In the field of the response property i used ReadLine module for simple user input**
+ 
 ```js
 const response = openai.createCompletion({
   model: "text-davinci-002",
