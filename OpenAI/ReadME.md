@@ -6,8 +6,8 @@
 ## **Installation**
 
 
-* ### **git clone this =>** (https://github.com/oveeauki/JavaScript/OpenAI.git)
-* ### **Then cd into the repo and do**
+* ### **git clone this =>** (https://github.com/oveeauki/JavaScript.git)
+* ### **Then cd into the OpenAI repo and do**
 
 ``` 
 npm install
