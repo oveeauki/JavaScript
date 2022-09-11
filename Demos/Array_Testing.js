@@ -3,7 +3,7 @@
 @description Enter objects into 
 array and modify then in realtime                
                                     */
-const {stdout,stdin,exit, mainModule} = require("process");
+const {stdout,stdin,exit} = require("process");
 const r = require("readline").createInterface({
 input:stdin,
 output:stdout
