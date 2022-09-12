@@ -25,7 +25,7 @@ return(this.snd);
 let _main = (string) => {
 const strdup = new stringdup(string);
 console.log("Retuned : [%s]",strdup.duplicate);
-return(0);
+exit(0);
 }
 
 _main("toimii");
