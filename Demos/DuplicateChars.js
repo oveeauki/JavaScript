@@ -27,4 +27,4 @@ const strdup = new stringdup(string);
 console.log("Retuned : [%s]",strdup.duplicate)
 }
 
-_main("homo");
+_main("toimii");
