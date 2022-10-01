@@ -14,10 +14,10 @@ this.str = string;
 }
 get check( ){
 if(this.str == 0){
-return(`String Empty : [${this.str}]`);
+  return(`String Empty : [${this.str}]`);
 }
 else{
-return(`String Size : [${this.str}]`);
+  return(`String Size : [${this.str}]`);
 }
 }
 };
