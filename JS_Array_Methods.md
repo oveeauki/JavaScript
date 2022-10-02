@@ -1,4 +1,4 @@
-# **JavaScript Array Methods**
+# **JavaScript String&Array Methods**
 
 ## **replace();**
 
