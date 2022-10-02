@@ -1,5 +1,16 @@
 # **JavaScript Array Methods**
 
+## **replace();**
+
+```js
+// Replace A char inside of a string using replace();
+const string = "Hello World";
+const replaced = string.replace(string[0],"");
+// Another Method if you want to replace a specific char inside a string you could do it with RegEx. In my sample i want to replace all "l" chars from the string so i use /\l/ RegEx pattern.
+const string = "Hello World";
+const replaced = string.replace(/\l/,"");
+```
+
 ## **Map();**
 
 ```js
