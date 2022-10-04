@@ -1,4 +1,13 @@
-# **JavaScript String&Array Methods**
+# **JavaScript Array&String Methods**
+
+## **toPrecision();**
+
+```js
+// To narrow down floats to precise decimal use toPrecision();
+const float = 1.111111111;
+return(float.toPrecision(3));
+// Returns 1.111
+```
 
 ## **replace();**
 
