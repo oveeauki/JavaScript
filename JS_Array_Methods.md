@@ -1,5 +1,21 @@
 # **JavaScript Array&String Methods**
 
+## **Includes();**
+
+```js
+const Options = ["a","b","c","d"];
+const input = "b";
+if(!Options.includes(input)){
+  console.log(`No Match!`);
+  return(1);
+}
+else{
+  console.log("Matched!");
+  return(0);
+}  
+
+```
+
 ## **toPrecision();**
 
 ```js
@@ -47,8 +63,8 @@ console.log(answ);
 // Compare all values in array and return boolean if same or not
 let array = [1,2,3,4];
 var answ = arr.every(dat => dat == array[0]);
-console.log(answ);
-
+return(answ);
+// Returns True or False
 ```
 
 ## **foreach();**
