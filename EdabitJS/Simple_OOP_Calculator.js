@@ -33,7 +33,7 @@ get add(){
 let prompt = (d1,d2) => {
   if(d1 <= 0 || d2 <= 0){
     console.log(`${c.red}Error!${c.reset}Enter Number Greater than 0... Argv[2]:[${d1}] Argv[3]:[${d2}]\n
-      Usage:[npm start <obj1> <obj2> <function>]
+      Usage:[node file.js <obj1> <obj2> <function>]
       Usable Functions are:[Divide,Multiply,Subtract,Add]`);
       exit(1);
 }
@@ -61,7 +61,7 @@ let _main = () => {
         }
           else{
             console.log(`
-            Usage:[npm start <obj1> <obj2> <function>]
+            Usage:[node file.js <obj1> <obj2> <function>]
             Usable Functions are:[Divide,Multiply,Subtract,Add]`);
             exit(1);
         }
