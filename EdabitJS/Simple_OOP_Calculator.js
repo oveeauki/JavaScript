@@ -16,7 +16,7 @@ get division(){
   let res = (this.d1/this.d2);
   return(`Returned ${res}`);
 }
-get multiply( ){
+get multiply(){
   let res = (this.d1*this.d2);
   return(`Returned ${res}`);
 }
