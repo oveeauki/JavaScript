@@ -4,7 +4,7 @@
 
 ```js
 // This is A RegEx String method and not a standard one
-const str = "ok ok"
+const str = "ok ok";
 const value = /\s/.test(str);
 return(value); // Returns Boolean
 ```
