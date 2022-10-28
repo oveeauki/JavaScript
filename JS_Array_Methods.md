@@ -1,5 +1,14 @@
 # **JavaScript Array&String Methods**
 
+## **Test();**
+
+```js
+// This is A RegEx String method and not a standard one
+const str = "ok ok"
+const value = /\s/.test(str);
+return(value); // Returns Boolean
+```
+
 ## **Includes();**
 
 ```js
@@ -12,8 +21,7 @@ if(!Options.includes(input)){
 else{
   console.log("Matched!");
   return(0);
-}  
-
+}
 ```
 
 ## **toPrecision();**
