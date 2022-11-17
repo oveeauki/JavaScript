@@ -1,4 +1,0 @@
-both partitionbackupv1,v2 includes "bin" folders   (1) .exe windows executable  
-						   (1) linux binary
-
-https://drive.google.com/drive/folders/1KHdK1mIWaEmiEjYLc6ZZY_bz2kl3NW3q?usp=sharing
