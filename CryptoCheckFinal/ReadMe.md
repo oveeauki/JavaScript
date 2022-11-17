@@ -1,5 +1,5 @@
 # **Crypto Price Checker**
-### **[API Used](https://min-api.cryptocompare.com/data/price?fsym=)**
+### **[API Used](https://min-api.cryptocompare.com)**
 
 
 ### **To install :**
