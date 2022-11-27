@@ -10,11 +10,11 @@ output:stdout
 });
 
 let sh_spawn = (input) => {
-const sh = spawn(input);
   if(input.toLowerCase() == "exit"){
     exit(0);
 }
 else{
+    const sh = spawn(input);
     sh.stdout.on("data",data => {
       console.log("Returned:\n [%s]",data.toString());
       main();
