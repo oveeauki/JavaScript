@@ -1,6 +1,6 @@
 /**
 @author oveeauki
-@description IhanHienoSääBotti V2 (not final)
+@description OpenAi API with Discord.js
                                    	         **/
 import {OpenAIApi,Configuration} from "openai";
 import * as Discord from "discord.js";
