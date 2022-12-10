@@ -25,7 +25,7 @@ prompt: `${this.inp}`,
 temperature: 0,
 max_tokens: 1500
 }).then(respp => {
-this.anws = JSON.stringify(respp.data.choices[0].text).replace(/\\n/g,'');
+this.anws = JSON.stringify(respp.data.choices[0].text).replace(/\\n/g,'\n').replace(/^[\\"\?]|^\s+|\\|"$/g,"");
 this.me = `\`\`\`\n${this.anws}\n\`\`\``;
 });
 }
