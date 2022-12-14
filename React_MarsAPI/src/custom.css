@@ -1,0 +1,29 @@
+.header1{
+color: red;
+font-size: 35px;
+position: sticky;
+margin-left: 18.5cm;
+}
+.photoclass{
+width:250px;
+margin-bottom:20px;
+margin-inline: 20px;
+}
+.phot1{
+position: relative; top: .5cm;
+}
+.buttonnextsol{
+position: relative;left: 25cm;
+border-radius: 5px;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-weight: bold;
+height:27px
+}
+.buttonprevioussol{
+position: relative;
+left: 16cm;
+border-radius: 5px;
+font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+font-weight: bold;
+height:27px;
+}
