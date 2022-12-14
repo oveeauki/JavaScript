@@ -1,7 +1,7 @@
 # **React Mars API Project**
 
-* ## **cd into repo**
-* ## **Run npm install**
+* ### **cd into repo**
+* ### **Run npm install**
   <br>
 
   ## **In the API field inside App.js add your API key from [this](https://api.nasa.gov/) site** 
