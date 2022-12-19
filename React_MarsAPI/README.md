@@ -1,4 +1,7 @@
 # **React Mars API Project**
+<br>
+
+* ## **Click** **[This](http://172.104.157.44:3000/)** **To View Self Hosted Preview**
 
 * ### **cd into repo**
 * ### **Run npm install**
