@@ -2,7 +2,7 @@ import React, { useState,useEffect} from "react";
 import axios from "axios";
 import './custom.css'
 
-const API_KEY = "8ZXUtdi6xCRljwtEYUAt9at0b4yirkQJ1JrYwhCr";
+const API_KEY = "<Your Key>";
 
 function App() {
   const [data,setData] = useState(null);
