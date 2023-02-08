@@ -82,3 +82,23 @@ return(answ);
 let array = [1,2,3,4];
 array.foreach(dat => {console.log(dat)});
 ```
+
+## **filter();**
+```js
+// Filtering all newlines out of array example
+const array = [
+'a',  '\n', 'b',  '\n', 'c',
+'\n', 'd',  '\n', 'e',  '\n',
+'f',  '\n', 'g',  '\n', 'h',
+'\n', 'i',  '\n', 'j',  '\n',
+'k'
+]
+const filtered = array.filter(obj => obj != '\n');
+return(filtered);
+/* Returns
+const array = [
+'a', 'b', 'c', 'd',
+'e', 'f', 'g', 'h',
+'i', 'j', 'k'
+] */
+```
