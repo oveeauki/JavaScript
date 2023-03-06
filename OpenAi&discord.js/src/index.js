@@ -1,7 +1,7 @@
 /**
-@author oveeauki
-@description IhanHienoSääBotti V2 (not final)
-                                   	         **/
+@author 0xFreDi
+@description OpenAi & Discordjs
+                                **/
 import {OpenAIApi,Configuration} from "openai"
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
