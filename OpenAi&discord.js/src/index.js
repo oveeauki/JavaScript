@@ -9,7 +9,7 @@ import {stdin,stdout,exit} from "process"
 import hasha from "hasha"
 import axios from "axios"
 
-const openaiconf = new Configuration({apiKey:"<yourkey>"});
+const openaiconf = new Configuration({apiKey:"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"});
 const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
@@ -19,7 +19,7 @@ client.login(cf.token);
 
 class AIAPI {
 constructor(input){
-this.inp = input;
+  this.inp = input;
 } 
 async apifetch(){
   const resp = await op.createCompletion({
@@ -88,38 +88,37 @@ if(viesti[0] == "." && viesti[1] == "weather" && !message.author.bot){
 try{
   let __message;
     const choice = viesti[2];
-    let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
-    const fetc = await axios.get(url).then(dat => {__message = dat.data});
+      let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
+        const fetc = await axios.get(url).then(dat => {__message = dat.data});
 
-let city = __message.location.name, country = __message.location.country;
-let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
-let lat = __message.location.lat,lon = __message.location.lon;
-let C = __message.current.temp_c, F = __message.current.temp_f;
-let feels_c = __message.current.feelslike_c, feels_f = __message.current.feelslike_f;
-let wind_D = __message.current.wind_dir; 
-let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
-let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
-let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
+         let city = __message.location.name, country = __message.location.country;
+         let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
+         let lat = __message.location.lat,lon = __message.location.lon;
+         let C = __message.current.temp_c, F = __message.current.temp_f;
+         let feels_c = __message.current.feelslike_c, feels_f = __message.current.feelslike_f;
+         let wind_D = __message.current.wind_dir; 
+         let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
+         let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
+         let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
 
-let _message_ = [
-`\u27AA Country [${country}]
-\u27AA City [${city}]
-\u27AA Region [${region}]
-\u27AA Date [${timesplitted[0]}]
-\u27AA Local Time (${timesplitted[1]})
-\u27AA Latitude (${lat})° | Longitude (${lon})°
-\u27AA Atmosphere Pressure (${atmosmb}) Mbar
-\u27AA Temperature (${C})°C | (${F})°F
-\u27AA Feels Like (${feels_c})°C | (${feels_f})°F
-\u27AA Wind Direction (${wind_D})
-\u27AA Visibility (KM) (${visikm}) | (Miles) (${visimiles})
-\u27AA Is_day Boolean xd  (${booleandayxd})
-\u27AA Humidity (${humidity})%
-\u27AA UV Index (${uv})
-`];
-
-const fin = `\`\`\`\n${_message_}\n\`\`\``;
-await message.reply(fin);
-}catch{Error}
+         let _message_ = [
+         `\u27AA Country [${country}]
+         \u27AA City [${city}]
+         \u27AA Region [${region}]
+         \u27AA Date [${timesplitted[0]}]
+         \u27AA Local Time (${timesplitted[1]})
+         \u27AA Latitude (${lat})° | Longitude (${lon})°
+         \u27AA Atmosphere Pressure (${atmosmb}) Mbar
+         \u27AA Temperature (${C})°C | (${F})°F
+         \u27AA Feels Like (${feels_c})°C | (${feels_f})°F
+         \u27AA Wind Direction (${wind_D})
+         \u27AA Visibility (KM) (${visikm}) | (Miles) (${visimiles})
+         \u27AA Is_day Boolean xd  (${booleandayxd})
+         \u27AA Humidity (${humidity})%
+         \u27AA UV Index (${uv})
+         `];
+            const fin = `\`\`\`\n${_message_}\n\`\`\``;
+              await message.reply(fin);
+}catch{Error};
 }
 });
