@@ -101,7 +101,7 @@ const array = [
 ] */
 ```
 
-### **Split();**
+## **Split();**
 ```js
 const string = "joo jees jaa";
 const splitted = string.split(" "); // Splits the string into seperate objects in array at every spacebar
