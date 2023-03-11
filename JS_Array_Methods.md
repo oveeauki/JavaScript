@@ -48,7 +48,6 @@ const replaced = string.replace(/\l/,"");
 
 ```js
 // For selecting all objects at once
-
 let array = [7,3,32,12,83,231,12,1];
 array.map(dat => {
 console.log(dat);
@@ -61,7 +60,6 @@ console.log(dat);
 let array = [7,3,32,12,83,231,12,1];
 let answ = array.sort((a,b) => (a-b));
 console.log(answ);
-
 //output => [1 3 7 12 12 32 83 231]
 ```
 
@@ -101,4 +99,11 @@ const array = [
 'e', 'f', 'g', 'h',
 'i', 'j', 'k'
 ] */
+```
+
+### **Split();**
+```js
+const string = "joo jees jaa";
+const splitted = string.split(" "); // Splits the string into seperate objects in array at every spacebar
+return(splitted); // Returns:[ 'joo', 'jees', 'jaa' ]
 ```
