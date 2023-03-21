@@ -26,7 +26,7 @@ class AIAPI {
 constructor(input){
 this.inp = input;
 } 
-/*async apifetch(){
+/*async apifetch(){ // GPT-3 standard model 
   const resp = await op.createCompletion({
   model: "text-davinci-003",
   prompt: `${this.inp}`,
@@ -37,7 +37,7 @@ this.inp = input;
   this.me = `\`\`\`\n${this.anws}\n\`\`\``;
 });
 }*/
-async apifetch(){
+async apifetch(){ // GPT-3.5-Turbo Support
   const resp = await conver.prompt(`${this.inp}`).then(resp => {
   //this.anws = JSON.stringify(resp).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
   this.me = `\`\`\`\n${resp}\n\`\`\``;
