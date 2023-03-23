@@ -40,7 +40,7 @@ this.inp = input;
 async apifetch(){ // GPT-3.5-Turbo Support
   const resp = await conver.prompt(`${this.inp}`).then(resp => {
   //this.anws = JSON.stringify(resp).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
-  this.me = `\`\`\`\n${resp}\n\`\`\``;
+  this.me = resp;
 });
 }
 }
