@@ -27,7 +27,7 @@ class functions{
   }
 }
 
-let print = async(beg,end) => {
+let print = (beg,end) => {
 var arr = [];
   for(let i=beg;i<end;i++){
     const char = String.fromCharCode(i);
@@ -39,7 +39,7 @@ var arr = [];
               setTimeout(() => {exit(0)},4000);
 }
 
-let main = async( ) => {
+let main = ( ) => {
 const file = "symbols.json";
   if(fs.existsSync(file)){
       fs.unlinkSync(file);
