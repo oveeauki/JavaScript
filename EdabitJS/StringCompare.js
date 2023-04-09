@@ -1,33 +1,59 @@
 /**
-*@auth oveeauki
-*@desc Is String the same backwards and forwards ?                            
-                                                  */ 
-import * as rl from "readline";
-import {stdout,stdin,exit} from "process";
-const r = rl.createInterface({
-input:stdin,
-output:stdout
-});
+@auth 0xFreDi
+@desc Compare Strings from a file                     
+                                    */
+import {exit} from "process";
+import fs from "fs";
+import {argv} from "process"
+import path from 'path';
 
-let compare = (start,rev) => {
-if(start == rev){
-  console.log("String [%s] is same backwards also [%s]",start,rev);
-}
-else{
-  console.log("String [%s] is not same backwards [%s]",start,rev);
-}
-exit(0);
-}
+const __filename = path.dirname(".");
 
-let main = async( ) => {
-  r.question("Enter String\n\u279c ",(startstring) => {
-    let endstring = "";
-      for(let i=startstring.length-1;i>=0;i--){
-        endstring += startstring[i];
+class functions{
+  read(file){
+    try{
+      this.file = [];
+      const lines = fs.readFileSync(file,'utf-8').split("\n");
+      for(let line of lines){
+        this.file.push(line);
+      }
+    }catch(error){
+      console.error(error);
     }
-        compare(startstring,endstring);
-    });
-        return(0);
+  }
+  getObjects(){
+    let arr = [];
+    for(let line of this.file){
+      arr.push(line);
+    }
+    return arr;
+  }
+}
+
+const comp = (arr = []) => {
+  let result = arr.every(dat => dat == arr[0]);
+     if(result){
+        console.log("Matches [%s]",arr[0]);
+        exit(0);
+      }
+    else{
+        console.log("Does not Match [%s]",arr[0])
+        exit(1);
+      }
+}
+
+const main = async() => {
+  let file = argv[2];
+    if(fs.existsSync(file)){
+      let f = new functions();
+        f.read(file);
+          let arr = f.getObjects();
+            let _comp = comp(arr);
+    }
+      else{
+        console.error("Error! File:%s\nDoes not exist... Try again!",file);
+        exit(1);
+     }
 }
 
 main();
