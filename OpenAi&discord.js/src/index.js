@@ -27,7 +27,7 @@ constructor(input){
 this.inp = input;
 }
 async apifetch(){
-  const resp = await op.createCompletion({
+  const resp = await op.createCompletion({ // GPT-3
   model: "text-davinci-003",
   prompt: `${this.inp}`,
   temperature: 0,
@@ -37,7 +37,7 @@ async apifetch(){
   this.me = `\`\`\`\n${this.anws}\n\`\`\``;
 });
 }
-/*async apifetch(){
+/*async apifetch(){ // GPT-3.5
   const resp = await conver.prompt(`${this.inp}`).then(resp => {
   //this.anws = JSON.stringify(resp).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
   this.me = resp;
