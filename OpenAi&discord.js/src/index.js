@@ -10,9 +10,9 @@ import hasha from "hasha"
 import axios from "axios"
 import {Conversation} from "gpt-turbo"
 
-const openaiconf = new Configuration({apiKey:"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"});
+const openaiconf = new Configuration({apiKey:""});
 /*const conver = new Conversation({
-  apiKey:"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",
+  apiKey:"",
   model:"gpt-3.5-turbo"
 });*/
 const op = new OpenAIApi(openaiconf);
