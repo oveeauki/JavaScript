@@ -26,7 +26,8 @@ class functions{
     for(let line of this.file){
       arr.push(line);
     }
-    return arr;
+    const joo = arr.filter(obj => obj != "");
+    return(joo);
   }
 }
 
