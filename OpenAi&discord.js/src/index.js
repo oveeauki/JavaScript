@@ -10,12 +10,12 @@ import hasha from "hasha"
 import axios from "axios"
 import {Conversation} from "gpt-turbo"
 
-//const openaiconf = new Configuration({apiKey:""});
-const conver = new Conversation({
-  apiKey:"",
+const openaiconf = new Configuration({apiKey:"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"});
+/*const conver = new Conversation({
+  apiKey:"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",
   model:"gpt-3.5-turbo"
-});
-//const op = new OpenAIApi(openaiconf);
+});*/
+const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
 var prfx = "!";
@@ -25,8 +25,8 @@ client.login(cf.token);
 class AIAPI {
 constructor(input){
 this.inp = input;
-} 
-/*async apifetch(){ // GPT-3 standard model 
+}
+async apifetch(){
   const resp = await op.createCompletion({
   model: "text-davinci-003",
   prompt: `${this.inp}`,
@@ -36,13 +36,13 @@ this.inp = input;
   this.anws = JSON.stringify(respp.data.choices[0].text).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
   this.me = `\`\`\`\n${this.anws}\n\`\`\``;
 });
-}*/
-async apifetch(){ // GPT-3.5-Turbo Support
+}
+/*async apifetch(){
   const resp = await conver.prompt(`${this.inp}`).then(resp => {
   //this.anws = JSON.stringify(resp).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
   this.me = resp;
 });
-}
+}*/
 }
 
 let disp = () => {
@@ -111,6 +111,14 @@ try{
          let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
          let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
          let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
+         let windkm = __message.current.gust_kph, windmph = __message.current.gust_mph
+            
+          if(booleandayxd){
+            booleandayxd = true;
+      }    
+          else{
+            booleandayxd = false;
+        }
 
 let _message_ = [
 `\u27AA Country [${country}]
@@ -124,9 +132,10 @@ let _message_ = [
 \u27AA Feels Like (${feels_c})°C | (${feels_f})°F
 \u27AA Wind Direction (${wind_D})
 \u27AA Visibility (KM) (${visikm}) | (Miles) (${visimiles})
-\u27AA Is_day Boolean xd  (${booleandayxd})
+\u27AA Is_day Boolean xd (${booleandayxd})
 \u27AA Humidity (${humidity})%
 \u27AA UV Index (${uv})
+\u27AA Wind Speed (Km/h) (${windkm}) | (Miles) (${windmph})
 `];
             const fin = `\`\`\`\n${_message_}\n\`\`\``;
               await message.reply(fin);
