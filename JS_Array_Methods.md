@@ -52,6 +52,22 @@ let array = [7,3,32,12,83,231,12,1];
 array.map(dat => {
 console.log(dat);
 });
+
+// Here example how to reverse all objects in array with map
+const sortstrings = async(arr = []) => {
+  let revstrings = [];
+    let reves = arr.map(str => str.split('').reverse().join(''));
+      for(let i=0;i<arr.length;i++){
+        await new Promise((res) => {
+          //console.clear();
+              revstrings.push(reves[i]);
+                console.log("Pushing [%s]",reves[i]);
+                res();
+        });
+    }
+      exit(0);
+}
+
 ```
 
 ## **Sort();**
@@ -101,7 +117,7 @@ const array = [
 ] */
 ```
 
-## **Split();**
+### **Split();**
 ```js
 const string = "joo jees jaa";
 const splitted = string.split(" "); // Splits the string into seperate objects in array at every spacebar
