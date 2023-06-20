@@ -10,11 +10,11 @@ import hasha from "hasha"
 import axios from "axios"
 import {Conversation} from "gpt-turbo"
 
-const openaiconf = new Configuration({apiKey:""});
-/*const conver = new Conversation({
+const openaiconf = new Configuration({apiKey:"<your key>"});
+const conver = new Conversation({
   apiKey:"",
-  model:"gpt-3.5-turbo"
-});*/
+  model:"gpt"
+});
 const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
@@ -96,12 +96,12 @@ if(viesti[0] == "." && viesti[1] == "hash" && !message.author.bot){
 }
 /* -------------------------- Weather ----------------------------------- */
 if(viesti[0] == "." && viesti[1].toLowerCase() == "weather" && !message.author.bot){
-try{
+  try{
   let __message;
     const choice = viesti[2].toLowerCase();
       let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
-        const fetc = await axios.get(url).then(dat => {__message = dat.data});
 
+        const fetc = await axios.get(url).then(dat => {__message = dat.data});
          let city = __message.location.name, country = __message.location.country;
          let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
          let lat = __message.location.lat,lon = __message.location.lon;
@@ -112,7 +112,8 @@ try{
          let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
          let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
          let windkm = __message.current.gust_kph, windmph = __message.current.gust_mph
-            
+         let condition = __message.current.condition.text
+
           if(booleandayxd){
             booleandayxd = true;
       }    
@@ -120,25 +121,54 @@ try{
             booleandayxd = false;
         }
 
-let _message_ = [
+    const embed = new Discord.MessageEmbed()
+  .setColor('#0099ff')
+  .setTitle(city)
+  .addField('\u2022 Date',timesplitted[0],true)
+  .addField('\u2022 Time (Local)',timesplitted[1],true)
+  .addField('\u2022 Country',country)
+  .addField('\u2022 Temperature',`(${C})°C  |  (${F})°F`,true)
+  .addField('\u2022 Condition',condition,true)
+  .addField('\u2022 Feels Like',`(${feels_c})°C | (${feels_f})°F`)
+  .addField('\u2022 Region',region,true)
+  .addField('\u2022 Visibility',`(${visikm})Km |(${visimiles}) Mi `,true)
+  .addField('\u2022 Cordinates',`Latitude (${lat})° | Longitude(${lon})°`)
+  .addField('\u2022 Wind Direction',wind_D,true)
+  .addField('\u2022 Wind Speed',`(${windkm}) Km/h | (${windmph}) Mp/h`,true)
+  .addField('\u2022 Humidity',`${humidity}%`)
+  .addField('\u2022 UV Index',uv,true)
+  .addField('\u2022 Is_Day Boolean xd',booleandayxd,true);
+
+              await message.reply(embed);
+}catch{Error};
+}/*
+else if(viesti[0] == "." && viesti[1].toLowerCase() == "forecast" && !message.author.bot){
+try{
+  let __message;
+    const choice = viesti[2].toLowerCase();
+    const days = viesti[3].toLowerCase();
+
+      let url = `http://api.weatherapi.com/v1/forecast.json?key=${Weather_API_t}&q={${choice}}&days=${days}`
+        const fetc = await axios.get(url).then(dat => {__message = dat.data});
+        console.log(__message.is_day[0]);
+
+         let city = __message.location.name,country = __message.location.country;
+         let region = __message.location.region;
+
+let _message__ = [
 `\u27AA Country [${country}]
 \u27AA City [${city}]
 \u27AA Region [${region}]
-\u27AA Date [${timesplitted[0]}]
-\u27AA Local Time (${timesplitted[1]})
-\u27AA Latitude (${lat})° | Longitude (${lon})°
-\u27AA Atmosphere Pressure (${atmosmb}) Mbar
-\u27AA Temperature (${C})°C | (${F})°F
-\u27AA Feels Like (${feels_c})°C | (${feels_f})°F
-\u27AA Wind Direction (${wind_D})
-\u27AA Visibility (KM) (${visikm}) | (Miles) (${visimiles})
-\u27AA Is_day Boolean xd (${booleandayxd})
-\u27AA Humidity (${humidity})%
-\u27AA UV Index (${uv})
-\u27AA Wind Speed (Km/h) (${windkm}) | (Miles) (${windmph})
+
+
 `];
-            const fin = `\`\`\`\n${_message_}\n\`\`\``;
+            const fin = `\`\`\`\n${_message__}\n\`\`\``;
               await message.reply(fin);
+          
 }catch{Error};
+
 }
+*/
+
+
 });
