@@ -8,13 +8,8 @@ import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
 import hasha from "hasha"
 import axios from "axios"
-import {Conversation} from "gpt-turbo"
 
-const openaiconf = new Configuration({apiKey:"<your key>"});
-const conver = new Conversation({
-  apiKey:"",
-  model:"gpt"
-});
+const openaiconf = new Configuration({apiKey:""});
 const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
@@ -37,12 +32,14 @@ async apifetch(){
   this.me = `\`\`\`\n${this.anws}\n\`\`\``;
 });
 }
-/*async apifetch(){ // GPT-3.5
-  const resp = await conver.prompt(`${this.inp}`).then(resp => {
-  //this.anws = JSON.stringify(resp).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
-  this.me = resp;
-});
-}*/
+
+async apigpt4(){ // GPT-4
+const gpt4req = await op.createChatCompletion({
+  model: "gpt-4",
+  messages: [{role: "user", content: `${this.inp}`}],
+})
+this.me = gpt4req.data.choices[0].message;
+}
 }
 
 let disp = () => {
@@ -62,8 +59,8 @@ client.once("ready",async() => {
 });
 
 client.on("message",async(message) => {
-const msgfinal = message.content.replace(/([!])/,"");
-let viesti = msgfinal.split(" ");
+const msgfinal = message.content.replace(/([!]|[.])/,"").toLowerCase();
+let viesti = msgfinal.toLowerCase();
 const myid = "300648311067508754";
 /*--------------------------------Message Channel BulkDelete----------------------------------------*/
 if(viesti[0] == "." && viesti[1] == "delete" && message.author.id == myid){
@@ -74,8 +71,8 @@ if(viesti[0] == "." && viesti[1] == "delete" && message.author.id == myid){
   message.channel.send(`I deleted [${int}] messages`).then(msg => msg.delete({timeout:10000}));
  }catch{Error}
  }
-/* ----------------------- Open Ai API --------------------------------------------------------------- */
-if(message.content.startsWith(prfx) && message.content.length > 2){
+/* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
+if(message.content.startsWith(prfx) && !msgfinal.includes("gpt4") && message.content.length > 2){
   message.channel.startTyping();
   try{
     let api = new AIAPI(msgfinal);
@@ -87,6 +84,21 @@ if(message.content.startsWith(prfx) && message.content.length > 2){
 else if(message.content.startsWith(prfx) && message.content.length <= 2){
   message.reply("<:joo:1039729807933579274>");
 }
+/* ----------------------- Open Ai API GPT4 --------------------------------------------------------------- */
+if(message.content.startsWith(prfx) && msgfinal.includes("gpt4") && message.content.length > 2){
+  const shit = msgfinal.replace(/gpt4/gi,'');
+  message.channel.startTyping();
+  try{
+    let api = new AIAPI(shit);
+    await api.apigpt4();
+    await message.reply(api.me);
+    }catch{Error} 
+    message.channel.stopTyping();
+}
+else if(message.content.startsWith(prfx) && message.content.length <= 2){
+  message.reply("<:joo:1039729807933579274>");
+}
+
 /* -------------------------- Hashing ----------------------------------- */
 if(viesti[0] == "." && viesti[1] == "hash" && !message.author.bot){
   try{
@@ -95,10 +107,11 @@ if(viesti[0] == "." && viesti[1] == "hash" && !message.author.bot){
 }catch{Error};
 }
 /* -------------------------- Weather ----------------------------------- */
-if(viesti[0] == "." && viesti[1].toLowerCase() == "weather" && !message.author.bot){
+if(message.content.startsWith(".") && message.content.includes("weather") && !message.author.bot){
   try{
   let __message;
-    const choice = viesti[2].toLowerCase();
+    const choice = message.content.replace(/^(\.|weather)\s*/gi,'');
+
       let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
 
         const fetc = await axios.get(url).then(dat => {__message = dat.data});
@@ -116,12 +129,12 @@ if(viesti[0] == "." && viesti[1].toLowerCase() == "weather" && !message.author.b
 
           if(booleandayxd){
             booleandayxd = true;
-      }    
+      }
           else{
             booleandayxd = false;
         }
 
-    const embed = new Discord.MessageEmbed()
+  const embed = new Discord.MessageEmbed()
   .setColor('#0099ff')
   .setTitle(city)
   .addField('\u2022 Date',timesplitted[0],true)
