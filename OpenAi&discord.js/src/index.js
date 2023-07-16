@@ -9,7 +9,7 @@ import {stdin,stdout,exit} from "process"
 import hasha from "hasha"
 import axios from "axios"
 
-const openaiconf = new Configuration({apiKey:""});
+const openaiconf = new Configuration({apiKey:"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"});
 const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
@@ -77,7 +77,7 @@ if(message.content.startsWith(prfx) && !msgfinal.includes("gpt4") && message.con
   try{
     let api = new AIAPI(msgfinal);
     await api.apifetch();
-    await message.reply(api.me);
+    await message.reply(`${api.me}`);
     }catch{Error} 
     message.channel.stopTyping();
 }
@@ -107,10 +107,10 @@ if(viesti[0] == "." && viesti[1] == "hash" && !message.author.bot){
 }catch{Error};
 }
 /* -------------------------- Weather ----------------------------------- */
-if(message.content.startsWith(".") && message.content.includes("weather") && !message.author.bot){
+if(message.content.startsWith(".") && msgfinal.includes("weather") && !message.author.bot){
   try{
   let __message;
-    const choice = message.content.replace(/^(\.|weather)\s*/gi,'');
+    const choice = msgfinal.replace(/^(\.|weather)\s*/gi,'');
 
       let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
 
