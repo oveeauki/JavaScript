@@ -9,7 +9,7 @@ import {stdin,stdout,exit} from "process"
 import hasha from "hasha"
 import axios from "axios"
 
-const openaiconf = new Configuration({apiKey:"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"});
+const openaiconf = new Configuration({apiKey:""});
 const op = new OpenAIApi(openaiconf);
 const client = new Discord.Client();
 const Weather_API_t = cf.Weatherapi_t;
