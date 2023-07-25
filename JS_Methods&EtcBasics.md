@@ -1,6 +1,8 @@
-# **JavaScript Array&String Methods**
+# **Methods&Etc Basics**
 
-## **Test();**
+### **JavaScript Array&String Methods**
+
+### **Test();**
 
 ```js
 // This is A RegEx String method and not a standard one
@@ -9,7 +11,7 @@ const value = /\s/.test(str);
 return(value); // Returns Boolean
 ```
 
-## **Includes();**
+### **Includes();**
 
 ```js
 const Options = ["a","b","c","d"];
@@ -24,7 +26,7 @@ else{
 }
 ```
 
-## **toPrecision();**
+### **toPrecision();**
 
 ```js
 // To narrow down floats to precise decimal use toPrecision();
@@ -33,7 +35,7 @@ return(float.toPrecision(3));
 // Returns 1.111
 ```
 
-## **replace();**
+### **replace();**
 
 ```js
 // Replace A char inside of a string using replace();
@@ -44,7 +46,7 @@ const string = "Hello World";
 const replaced = string.replace(/\l/,"");
 ```
 
-## **Map();**
+### **Map();**
 
 ```js
 // For selecting all objects at once
@@ -70,7 +72,7 @@ const sortstrings = async(arr = []) => {
 
 ```
 
-## **Sort();**
+### **Sort();**
 
 ```js
 let array = [7,3,32,12,83,231,12,1];
@@ -79,7 +81,7 @@ console.log(answ);
 //output => [1 3 7 12 12 32 83 231]
 ```
 
-## **Every();**
+### **Every();**
 
 ```js
 // Compare all values in array and return boolean if same or not
@@ -89,7 +91,7 @@ return(answ);
 // Returns True or False
 ```
 
-## **foreach();**
+### **foreach();**
 
 ```js
 // loop all objects with foreach
@@ -97,7 +99,7 @@ let array = [1,2,3,4];
 array.foreach(dat => {console.log(dat)});
 ```
 
-## **filter();**
+### **filter();**
 ```js
 // Filtering all newlines out of array example
 const array = [
@@ -122,4 +124,23 @@ const array = [
 const string = "joo jees jaa";
 const splitted = string.split(" "); // Splits the string into seperate objects in array at every spacebar
 return(splitted); // Returns:[ 'joo', 'jees', 'jaa' ]
+```
+
+### **For Loops**
+```js
+// for of loop
+  let arr = ["k","3","34","3423"]
+    let a = []
+      for(const abc of arr){
+        a.push(abc);
+}
+        return(a); // Returns [ 'k', '3', '34', '3423' ]
+
+// for in loop
+  let arr = ["k","3","34","3423"]
+    let a = []
+      for(let abc in arr){
+        a.push(arr[abc]);
+}
+        return(a); // Returns [ 'k', '3', '34', '3423' ]
 ```
