@@ -26,6 +26,7 @@ async apifetch(){
   model: "text-davinci-003",
   prompt: `${this.inp}`,
   temperature: 0.5,
+  max_tokens: 4000
 }).then(respp => {
   this.anws = JSON.stringify(respp.data.choices[0].text).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
   this.me = `\`\`\`\n${this.anws}\n\`\`\``;
@@ -52,6 +53,31 @@ async dall_e(){
 }
 }
 
+class timer{
+  constructor(){
+    this.dallecount = 0;
+}
+  timer___ ( ){
+    const date = new Date();
+    this.mins = date.getMinutes();
+    this.hours = date.getHours();
+    this.seconds = date.getSeconds();
+    const total = `[${this.hours}:${this.mins}:${this.seconds}]`;
+    if(this.mins == 59){
+      this.dallecount = 0;
+    }
+
+    return(total);
+    }
+
+start(){
+  this.timerid = setInterval(() => {
+    const res = this.timer___();
+ // console.log("%s\n%d",res,this.dallecount);
+},500);
+}
+}
+
 let disp = () => {
   stdout.write(
 `Botti Status [Ready]
@@ -61,8 +87,11 @@ Botti Nick [${client.user.username}]
 /********************************************/\n`);
 }
 
+let _timer = new timer();
+
 client.once("ready",async() => {
   console.clear(); 
+  _timer.start();
   disp();
   await client.user.setActivity("Sää");      
   await client.user.setPresence({status:"dnd"});
@@ -82,20 +111,26 @@ if(message.content.startsWith(".") && message.content.includes("delete") && mess
  }catch{Error}
  }
 /* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
-if(message.content.startsWith(prfx) && msgfinal.includes("dalle") && message.content.length > 4){
+if(message.content.startsWith(prfx) && msgfinal.includes("dalle") && _timer.dallecount <= 1){
+  _timer.dallecount++;
+  //console.log(_timer.dallecount)
   const shit = msgfinal.replace(/dalle/gi,'');
-  message.channel.startTyping();
-  try{
-    let api = new AIAPI(shit);
-    await api.dall_e();
-    await message.reply({
-      files:[{
-        attachment:api.me,
-        name:"image.png"
-  }]
-});
-    }catch{Error} 
+  let api = new AIAPI(shit);
+   message.channel.startTyping();
+    try{
+      await api.dall_e();
+      await message.reply({
+        files:[{
+          attachment:api.me,
+          name:"image.png"
+      }]
+    });
+      }catch{Error} 
     message.channel.stopTyping();
+}
+else if((message.content.startsWith(prfx) && msgfinal.includes("dalle")) && (_timer.dallecount <= 2 && !message.author.bot)){
+  const msg = `Max 2 Images per Hour. Resets between 60mins: [${(60-_timer.mins)}] Mins left for reset...`;
+  message.reply(msg);
 }
 /* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
 if(message.content.startsWith(prfx) && !(msgfinal.includes("gpt4") || msgfinal.includes("dalle")) && message.content.length > 2){
@@ -124,7 +159,6 @@ if(message.content.startsWith(prfx) && msgfinal.includes("gpt4") && message.cont
 else if(message.content.startsWith(prfx) && message.content.length <= 2){
   message.reply("<:joo:1039729807933579274>");
 }
-
 /* -------------------------- Hashing ----------------------------------- */
 if(viesti[0] == "." && viesti[1] == "hash" && !message.author.bot){
   try{
