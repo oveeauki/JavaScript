@@ -24,7 +24,7 @@ class AIAPI {
 async apifetch(){
   const resp = await op.createCompletion({ // GPT-3
   model: "text-davinci-003",
-  prompt: `${this.inp}`,
+  prompt: this.inp,
   temperature: 0.5,
   max_tokens: 4000
 }).then(respp => {
@@ -35,9 +35,9 @@ async apifetch(){
 async apigpt4(){ // GPT-4
   const gpt4req = await op.createChatCompletion({
     model: "gpt-4-1106-preview",
-    messages: [{role: "user", content: `${this.inp}`}],
+    messages: [{role:"user", content:this.inp}],
     temperature:0.5,
-    presence_penalty:1,
+    presence_penalty:2,
     frequency_penalty:1
   })
   this.me = gpt4req.data.choices[0].message;
@@ -66,7 +66,6 @@ class timer{
     if(this.mins == 59){
       this.dallecount = 0;
     }
-
     return(total);
     }
 
@@ -111,7 +110,7 @@ if(message.content.startsWith(".") && message.content.includes("delete") && mess
  }catch{Error}
  }
 /* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
-if(message.content.startsWith(prfx) && msgfinal.includes("dalle") && _timer.dallecount <= 1){
+if(message.content.startsWith(prfx) && msgfinal.includes("dalle") && _timer.dallecount <= 2){
   _timer.dallecount++;
   //console.log(_timer.dallecount)
   const shit = msgfinal.replace(/dalle/gi,'');
@@ -128,9 +127,9 @@ if(message.content.startsWith(prfx) && msgfinal.includes("dalle") && _timer.dall
       }catch{Error} 
     message.channel.stopTyping();
 }
-else if((message.content.startsWith(prfx) && msgfinal.includes("dalle")) && (_timer.dallecount <= 2 && !message.author.bot)){
-  const msg = `Max 2 Images per Hour. Resets between 60mins: [${(60-_timer.mins)}] Mins left for reset...`;
-  message.reply(msg);
+else if((message.content.startsWith(prfx) && msgfinal.includes("dalle")) && (_timer.dallecount > 2 && !message.author.bot)){
+  const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
+  message.reply(msg).then(msg => msg.delete({timeout:10000}))
 }
 /* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
 if(message.content.startsWith(prfx) && !(msgfinal.includes("gpt4") || msgfinal.includes("dalle")) && message.content.length > 2){
