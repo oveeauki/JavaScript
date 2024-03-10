@@ -1,0 +1,23 @@
+{
+  "name": "bottiv2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.17.1",
+    "axios": "^1.6.7",
+    "chatgpt": "^5.2.5",
+    "discord.js": "^12.5.2",
+    "gpt-turbo": "^5.0.1",
+    "hasha": "^6.0.0",
+    "openai": "^4.28.4",
+    "request": "^2.88.2"
+  }
+}
