@@ -1,3 +1,6 @@
+/**
+@desc more optimized for browsing !
+                                      **/
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import './custom.css'
