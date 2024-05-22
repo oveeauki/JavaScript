@@ -1,135 +1,276 @@
-/*
-        The
-            [IhanHienoSää] 
-                           Bot
-                                    */
+/**
+@author 0xFreDi
+@description HienoSääBotti Main
+@todo add chunk splitter for long messages
+                                          **/
+import {OpenAI} from "openai"
+import * as Discord from "discord.js"
+import cf from "../Config/config.json" assert {type:"json"}
+import {stdin,stdout,exit} from "process"
+import {hash} from "hasha"
+import axios from "axios"
+import claude from "@anthropic-ai/sdk"
 
-const Discord = require("discord.js");
+const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const client = new Discord.Client();
-const {Discord_t,Weather_API_t} = require("../Config/confs.json");
-const request = require("request");
-const {c} = require("../Modules/colors");
-const hash = require("hasha");
-const fs = require("fs");
-const path = require("path");
+const Weather_API_t = cf.Weatherapi_t;
+const _claudeai = new claude({apiKey:cf.claudeai_t});
 
-client.login(Discord_t);
+var prfx = "!";
+
+client.login(cf.token);
+
+class claudeaiapi{
+  constructor(inputmsg){
+    this.inp = inputmsg;
+}
+  async claudefetch(){
+    const resp = await _claudeai.messages.create({
+      max_tokens:1000,
+      model:"claude-3-opus-20240229",
+      messages:[{role:"user",content:this.inp}],
+      temperature:0.3
+  }).then(resp_ => {
+    const str = resp_.content[0].text
+    this.me = str
+})
+}
+}
+
+class AIAPI {
+  constructor(input){
+    this.inp = input;
+}
+async apifetch(){
+  const resp = await aicli.chat.completions.create({ // GPT-3
+  model: "gpt-3.5-turbo-0125",
+  messages:[{role:"user",content:this.inp}],
+  temperature:0.2
+}).then(respp => {
+  this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
+  this.em = `\`\`\`\n${this.anws}\n\`\`\``;
+})
+}
+async apigpt4(){ // GPT-4
+  const gpt4req = await aicli.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{role:"user",content:this.inp}],
+    temperature: 0.3
+  }).then(resp => {
+      this.me = resp.choices[0].message.content
+    })
+}
+async dall_e(){
+  const dalle = await aicli.images.generate({
+    model: "dall-e-3",
+    prompt:this.inp,
+    n:1,
+    size:"1024x1024"
+})
+  this.me = dalle.data[0].url;
+}
+}
+
+class timer{
+  constructor(){
+    this.dallecount = 0;
+}
+  timer___ (){
+    const date = new Date();
+    this.mins = date.getMinutes();
+    this.hours = date.getHours();
+    this.seconds = date.getSeconds();
+    const total = `[${this.hours}:${this.mins}:${this.seconds}]`;
+    if(this.mins == 59){
+      this.dallecount = 0;
+  }
+    return(total);
+}
+start(){
+  this.timerid = setInterval(() => {
+    const res = this.timer___();
+    },500);
+  }
+}
+
+let disp = () => {
+  stdout.write(
+`Botti Status [Ready]
+Botti ID [${client.user.id}]
+Botti is in [${client.guilds.cache.size}] Servers
+Botti Nick [${client.user.username}]
+/********************************************/\n`);
+}
+
+let _timer = new timer();
 
 client.once("ready",async() => {
-await client.user.setStatus("dnd");
-await client.user.setActivity("Providing ihan hienoa säätä since yesss");
-console.clear();
-console.log(`
-${c.blue}\tIhanHienoSääBot${c.reset}\n         Init ${c.green}Success${c.reset}!
-/******************************/
-Bot Status [${c.red}${client.user.presence.status}${c.reset}]
-Bot is On [${client.guilds.cache.size}] Server\\s
-Bot UserID [${client.user.id}]
-Bot Username [${client.user.username}]
-/******************************/\n`);
+  console.clear(); 
+  _timer.start();
+  disp();
+  await client.user.setActivity("Sää");      
+  await client.user.setPresence({status:"dnd"});
 });
 
-client.on("message",async message => {
-let begin = message.content.split(" ");
-if(message.channel.type == "dm" && !message.author.bot){
-console.log(`[${message.author.username}] Sent : ${message.content}`)
-message.channel.startTyping();
-setTimeout(function ok(){
-message.reply(`**Usage: Enter $weather <Location> 
-at any channel in a server which the bot is part of.**`);
-},2000);
-message.channel.stopTyping();
-}
-if(message.content.startsWith("delete") && message.author.id === '300648311067508754'){
-const int = message.content.match(/\d+/);
-const parsed = parseInt(int);
-message.channel.bulkDelete(parsed+1);
-message.reply(`I deleted [${parsed}] message\\s !`).then(msg => {
-msg.delete({ timeout: 9000 })});
-console.log(`Deleted [${parsed}] Message\\s @ ${message.guild.name} (${message.channel.name})`);
-}
-if(begin[0] == "$writefile" && !message.author.bot){
-fs.writeFile(`${begin[1]}.txt`,`${begin[2]}`,(err) => {
-if(err)
-    console.log(err);
-console.log(`${message.author.username} Created file ${begin[1]} With Contents of [${begin[2]}]`);
-message.reply("Created File");
-});
-}
-else if(begin[0] == "$readfile" && !message.author.bot){
-fs.readFile(`${begin[1]}.txt`,(err,data) => {
-if(err)
-    console.log(err);
-else
-    console.log(data.toString());
-    message.reply(`contents of a message are **${data.toString()}**`)
-    return(data.toString());
-});
-}
-else if(begin[0] == "$listfiles" && !message.author.bot){
-fs.readdir(`${path.join(__dirname),'./'}`,(err,files) =>{
-if(err)
-    return(err);
-else
-    for(let x in files){
-    files[x] += aa;
-    console.log(`${files[x]}`);
-}
-message.reply(`${aa}`);
-});
-}
-if(begin[0] == "$hash" && begin[1] !== "--options"){
-console.log(`Begin[0] == ${begin[0]} | Begin[1] == ${begin[1]}`);
-let hashedvalue = hash(`${begin[1]}`,{algorithm:`${begin[2]}`});
-console.log(`${message.author.username} Hashed Word [${begin[1]}] (${begin[2]}) = [${hashedvalue}]`);
-message.reply(`The hashed value of [${begin[1]}] = [${hashedvalue}](${begin[2]})`);
-}
-else if(message.content.startsWith("$hash") && begin[1] == "--options" ){
-message.reply("Hashing algorithms available are :```\u25B6 MD5\n\u25B6 SHA1\n\u25B6 SHA256```");
-}
+client.on("message",async(message) => {
+  const msgfinal = message.content.replace(/[!.]\s+/,"").toLowerCase();
+  const opts = ["gpt4","dalle","hash","claude"]
+  let viesti = message.content.split(" ")
+  const myid = "300648311067508754";
 
-if(message.channel.type == 'text' && begin[0] == '$weather' && !message.author.bot){
-let _Ch_ID = message.channel.id;
-let kaupunki = message.content;
-let choice = kaupunki.split(" ").pop();
-console.log(choice[0],choice[1],choice[2]);
-let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
+/*--------------------------------Message Channel BulkDelete----------------------------------------*/
+  if((message.content.startsWith(".") && msgfinal.includes("delete")) && message.author.id == myid){
+    try{
+      const parsed = message.content.match(/\d+/);
+      const int = parseInt(parsed);
+      message.channel.bulkDelete(int+1);
+      message.channel.send(`I deleted [${int}] messages`).then(msg => msg.delete({timeout:10000}));
+  }catch{Error}
+  }
+  else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
+    message.reply("<:bro:968649274281840640>")
+  }
+/* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
+    _timer.dallecount++;
+    //console.log(_timer.dallecount)
+    const shit = msgfinal.replace(/dalle/gi,'');
+    let api = new AIAPI(shit);
+    message.channel.startTyping();
+      try{
+        await api.dall_e();
+        await message.reply({
+          files:[{
+            attachment:api.me,
+            name:"image.png"
+        }] 
+    });
+      }catch{Error} 
+    message.channel.stopTyping();
+  }
+  else if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && (_timer.dallecount > 2 && !message.author.bot)){
+    const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
+    message.reply(msg).then(msg => msg.delete({timeout:10000}))
+  }
+/*----------------------------------------------------------------------------------------------*/
 
-request(url,(err,res,body) => {
-let __message = JSON.parse(body);
-let city = __message.location.name, country = __message.location.country;
-let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
-let lat = __message.location.lat,lon = __message.location.lon;
-let C = __message.current.temp_c, F = __message.current.temp_f;
-let feels_c = __message.current.feelslike_c, feels_f = __message.current.feelslike_f;
-let wind_D = __message.current.wind_dir; 
-let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
-let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
-let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
 
-let _message_ = [
-`\u27AA Country [${country}]
-\u27AA City [${city}]
-\u27AA Region [${region}]
-\u27AA Date [${timesplitted[0]}]
-\u27AA Local Time (${timesplitted[1]})
-\u27AA Latitude (${lat})° | Longitude (${lon})°
-\u27AA Atmosphere Pressure (${atmosmb}) Mbar
-\u27AA Temperature (${C})°C | (${F})°F
-\u27AA Feels Like (${feels_c})°C | (${feels_f})°F
-\u27AA Wind Direction (${wind_D})
-\u27AA Visibility (KM) (${visikm}) | (Miles) (${visimiles})
-\u27AA Is_day Boolean xd  (${booleandayxd})
-\u27AA Humidity (${humidity})%
-\u27AA UV Index (${uv})
-`];
+/*--------------------Claude Ai-------------------------------------------------------------*/
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("claude")) && message.content.length > 2){
+    const shit = msgfinal.replace(/claude/gi,'');
+    message.channel.startTyping();
+    try{
+      let aiclaude = new claudeaiapi(shit)
+      await aiclaude.claudefetch();
+      await message.reply(aiclaude.me);
+      }catch{Error} 
+      message.channel.stopTyping();
+  }
+/* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
+  if((message.content.startsWith(prfx) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
+    message.channel.startTyping();
+    try{
+      let api = new AIAPI(msgfinal);
+      await api.apifetch();
+      await message.reply(api.em);
+      }catch{Error} 
+      message.channel.stopTyping();
+  }
+  else if(message.content.startsWith(prfx) && message.content.length <= 2){
+    message.reply("<:joo:1039729807933579274>");
+  }
 
-if(err)
-    console.log(`Tällänen Virhe xd [${err}]`);
+/* ----------------------- Open Ai API GPT4 --------------------------------------------------------------- */
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("gpt4")) && message.content.length > 2){
+    const shit = msgfinal.replace(/gpt4/gi,'');
+    message.channel.startTyping();
+    try{
+      let api = new AIAPI(shit);
+      await api.apigpt4();
+      await message.reply(api.me);
+      }catch{Error} 
+      message.channel.stopTyping();
+  }
+  else if(message.content.startsWith(prfx) && message.content.length <= 2){
+    message.reply("<:joo:1039729807933579274>");
+  }
+/* -------------------------- Hashing ----------------------------------- */
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
+    const parsed = msgfinal.replace(/hash/,"").replace(/\s/g,"");
+    try{
+      const hashed =  await hash(viesti[2],({"algorithm":`${viesti[3]}`}));
+      await message.reply(`hash of ${viesti[2]} in ${viesti[3]} is [${hashed}]`);
+  }catch{Error};
+  }
+/* -------------------------- Weather ----------------------------------- */
+  if((viesti[0] == ".w" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("weather"))){
+    try{
+        let __message;
+        const choice = msgfinal.replace(/^(\.|weather)\s*/gi,'');
+        let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
+        const fetc = await axios.get(url).then(dat => {__message = dat.data});
+        let city = __message.location.name, country = __message.location.country;
+        let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
+        let lat = __message.location.lat,lon = __message.location.lon;
+        let C = __message.current.temp_c, F = __message.current.temp_f;
+        let feels_c = __message.current.feelslike_c, feels_f = __message.current.feelslike_f;
+        let wind_D = __message.current.wind_dir; 
+        let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
+        let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
+        let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
+        let windkm = __message.current.gust_kph, windmph = __message.current.gust_mph
+        let condition = __message.current.condition.text
 
-else if(res.statusCode == 200 && !err){
-    client.channels.cache.get(`${_Ch_ID}`).send(`**${_message_}**`);   
-}
-});
-}
+        if(booleandayxd){
+          booleandayxd = true;
+        }
+        else{
+          booleandayxd = false;
+        }
+
+        const embed = new Discord.MessageEmbed()
+        .setColor('#0099ff')
+        .setTitle(city)
+        .addField('\u2022 Date',timesplitted[0],true)
+        .addField('\u2022 Time (Local)',timesplitted[1],true)
+        .addField('\u2022 Country',country)
+        .addField('\u2022 Temperature',`(${C})°C  |  (${F})°F`,true)
+        .addField('\u2022 Condition',condition,true)
+        .addField('\u2022 Feels Like',`(${feels_c})°C | (${feels_f})°F`)
+        .addField('\u2022 Region',region,true)
+        .addField('\u2022 Visibility',`(${visikm})Km |(${visimiles}) Miles `,true)
+        .addField('\u2022 Cordinates',`Latitude (${lat})° | Longitude(${lon})°`)
+        .addField('\u2022 Wind Direction',wind_D,true)
+        .addField('\u2022 Wind Speed',`(${windkm}) Km/h | (${windmph}) Mph`,true)
+        .addField('\u2022 Humidity',`${humidity}%`)
+        .addField('\u2022 UV Index',uv,true)
+        .addField('\u2022 Is_Day Boolean xd',booleandayxd,true);
+        await message.reply(embed);
+        }catch{Error};
+  }
+/*
+  else if(viesti[0] == "." && viesti[1].toLowerCase() == "forecast" && !message.author.bot){
+  try{
+    let __message;hasha
+      const choice = viesti[2].toLowerCase();
+      const days = viesti[3].toLowerCase();
+
+      let url = `http://api.weatherapi.com/v1/forecast.json?key=${Weather_API_t}&q={${choice}}&days=${days}`
+      const fetc = await axios.get(url).then(dat => {__message = dat.data});
+      console.log(__message.is_day[0]);
+
+      let city = __message.location.name,country = __message.location.country;
+      let region = __message.location.region;
+
+  let _message__ = [
+  `\u27AA Country [${country}]
+  \u27AA City [${city}]
+  \u27AA Region [${region}]
+
+  `];
+      const fin = `\`\`\`\n${_message__}\n\`\`\``;
+      await message.reply(fin);
+  }catch{Error};
+  }
+*/
 });
