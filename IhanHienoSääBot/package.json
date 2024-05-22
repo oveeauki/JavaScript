@@ -12,12 +12,17 @@
   "type": "module",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.17.1",
+    "@types/node": "^20.12.12",
     "axios": "^1.6.7",
     "chatgpt": "^5.2.5",
-    "discord.js": "^12.5.2",
+    "curl": "^0.1.4",
+    "discord-api-types": "^0.37.84",
+    "discord.js": "^12.5.3",
     "gpt-turbo": "^5.0.1",
     "hasha": "^6.0.0",
+    "image-data-uri": "^2.0.1",
     "openai": "^4.28.4",
+    "openssl": "^2.0.0",
     "request": "^2.88.2"
   }
 }
