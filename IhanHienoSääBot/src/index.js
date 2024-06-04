@@ -1,8 +1,9 @@
 /**
 @author 0xFreDi
 @description HienoSääBotti Main
-@todo add chunk splitter for long messages
-                                          **/
+@todo add chunk splitter bc of 
+message max length in discord api
+                                  **/
 import {OpenAI} from "openai"
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
@@ -10,6 +11,7 @@ import {stdin,stdout,exit} from "process"
 import {hash} from "hasha"
 import axios from "axios"
 import claude from "@anthropic-ai/sdk"
+import {AIAPI,claudeaiapi} from "../Modules/apis.js"
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const client = new Discord.Client();
@@ -19,57 +21,6 @@ const _claudeai = new claude({apiKey:cf.claudeai_t});
 var prfx = "!";
 
 client.login(cf.token);
-
-class claudeaiapi{
-  constructor(inputmsg){
-    this.inp = inputmsg;
-}
-  async claudefetch(){
-    const resp = await _claudeai.messages.create({
-      max_tokens:1000,
-      model:"claude-3-opus-20240229",
-      messages:[{role:"user",content:this.inp}],
-      temperature:0.3
-  }).then(resp_ => {
-    const str = resp_.content[0].text
-    this.me = str
-})
-}
-}
-
-class AIAPI {
-  constructor(input){
-    this.inp = input;
-}
-async apifetch(){
-  const resp = await aicli.chat.completions.create({ // GPT-3
-  model: "gpt-3.5-turbo-0125",
-  messages:[{role:"user",content:this.inp}],
-  temperature:0.2
-}).then(respp => {
-  this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
-  this.em = `\`\`\`\n${this.anws}\n\`\`\``;
-})
-}
-async apigpt4(){ // GPT-4
-  const gpt4req = await aicli.chat.completions.create({
-    model: "gpt-4o",
-    messages: [{role:"user",content:this.inp}],
-    temperature: 0.3
-  }).then(resp => {
-      this.me = resp.choices[0].message.content
-    })
-}
-async dall_e(){
-  const dalle = await aicli.images.generate({
-    model: "dall-e-3",
-    prompt:this.inp,
-    n:1,
-    size:"1024x1024"
-})
-  this.me = dalle.data[0].url;
-}
-}
 
 class timer{
   constructor(){
@@ -113,7 +64,10 @@ client.once("ready",async() => {
 });
 
 client.on("message",async(message) => {
-  const msgfinal = message.content.replace(/[!.]\s+/,"").toLowerCase();
+  const msgfinal = message.content
+                  .replace(/[!.]/i,"")
+                  .trim()
+                  .toLowerCase();
   const opts = ["gpt4","dalle","hash","claude"]
   let viesti = message.content.split(" ")
   const myid = "300648311067508754";
@@ -134,7 +88,7 @@ client.on("message",async(message) => {
   if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
     _timer.dallecount++;
     //console.log(_timer.dallecount)
-    const shit = msgfinal.replace(/dalle/gi,'');
+    const shit = msgfinal.replace(/dalle/i,'').trim();
     let api = new AIAPI(shit);
     message.channel.startTyping();
       try{
@@ -154,10 +108,9 @@ client.on("message",async(message) => {
   }
 /*----------------------------------------------------------------------------------------------*/
 
-
 /*--------------------Claude Ai-------------------------------------------------------------*/
   if((message.content.startsWith(prfx) && msgfinal.startsWith("claude")) && message.content.length > 2){
-    const shit = msgfinal.replace(/claude/gi,'');
+    const shit = msgfinal.replace(/claude/i,'');
     message.channel.startTyping();
     try{
       let aiclaude = new claudeaiapi(shit)
@@ -182,7 +135,7 @@ client.on("message",async(message) => {
 
 /* ----------------------- Open Ai API GPT4 --------------------------------------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("gpt4")) && message.content.length > 2){
-    const shit = msgfinal.replace(/gpt4/gi,'');
+    const shit = msgfinal.replace(/gpt4/i,'').trim();
     message.channel.startTyping();
     try{
       let api = new AIAPI(shit);
@@ -196,9 +149,9 @@ client.on("message",async(message) => {
   }
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
-    const parsed = msgfinal.replace(/hash/,"").replace(/\s/g,"");
+    const parsed = msgfinal.replace(/hash/i,"").trim();
     try{
-      const hashed =  await hash(viesti[2],({"algorithm":`${viesti[3]}`}));
+      const hashed = await hash(viesti[2],({"algorithm":`${viesti[3]}`}));
       await message.reply(`hash of ${viesti[2]} in ${viesti[3]} is [${hashed}]`);
   }catch{Error};
   }
@@ -206,8 +159,9 @@ client.on("message",async(message) => {
   if((viesti[0] == ".w" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("weather"))){
     try{
         let __message;
-        const choice = msgfinal.replace(/^(\.|weather)\s*/gi,'');
-        let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${choice}}&aqi=no`
+        const choice = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
+        const encodedChoice = encodeURIComponent(choice);
+        let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${encodedChoice}}&aqi=no`
         const fetc = await axios.get(url).then(dat => {__message = dat.data});
         let city = __message.location.name, country = __message.location.country;
         let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
@@ -227,7 +181,6 @@ client.on("message",async(message) => {
         else{
           booleandayxd = false;
         }
-
         const embed = new Discord.MessageEmbed()
         .setColor('#0099ff')
         .setTitle(city)
