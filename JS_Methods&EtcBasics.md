@@ -58,13 +58,13 @@ console.log(dat);
 // Here example how to reverse all objects in array with map
 const sortstrings = async(arr = []) => {
   let revstrings = [];
-    let reves = arr.map(str => str.split('').reverse().join(''));
-      for(let i=0;i<arr.length;i++){
-        await new Promise((res) => {
-          //console.clear();
-              revstrings.push(reves[i]);
-                console.log("Pushing [%s]",reves[i]);
-                res();
+  let reves = arr.map(str => str.split('').reverse().join(''));
+  for(let i=0;i<arr.length;i++){
+    await new Promise((res) => {
+      //console.clear();
+      revstrings.push(reves[i]);
+      console.log("Pushing [%s]",reves[i]);
+      res();
         });
     }
       exit(0);
@@ -130,17 +130,17 @@ return(splitted); // Returns:[ 'joo', 'jees', 'jaa' ]
 ```js
 // for of loop
   let arr = ["k","3","34","3423"]
-    let a = []
-      for(const abc of arr){
-        a.push(abc);
+  let a = []
+  for(const abc of arr){
+    a.push(abc);
 }
-        return(a); // Returns [ 'k', '3', '34', '3423' ]
+    return(a); // Returns [ 'k', '3', '34', '3423' ]
 
 // for in loop
   let arr = ["k","3","34","3423"]
-    let a = []
-      for(let abc in arr){
-        a.push(arr[abc]);
+  let a = []
+  for(let abc in arr){
+    a.push(arr[abc]);
 }
-        return(a); // Returns [ 'k', '3', '34', '3423' ]
+    return(a); // Returns [ 'k', '3', '34', '3423' ]
 ```
