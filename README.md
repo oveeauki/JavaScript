@@ -2,7 +2,7 @@
 
 <p style="" > This is my repository for JS related projects. See links below for useful sources
 
-* ### **[JS Array Methods](https://github.com/oveeauki/JavaScript/blob/main/JS_Array_Methods.md)**
+* ### **[JS Array Methods](https://github.com/oveeauki/JavaScript/blob/main/JS_Methods%26EtcBasics.md)**
 
 * ### **[RegEx App](https://regexr.com/)**
    
