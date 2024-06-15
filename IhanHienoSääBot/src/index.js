@@ -8,10 +8,10 @@ import {OpenAI} from "openai"
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
-import {hash} from "hasha"
 import axios from "axios"
 import claude from "@anthropic-ai/sdk"
 import {AIAPI,claudeaiapi} from "../Modules/apis.js"
+import crypto from "node:crypto" 
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const client = new Discord.Client();
@@ -150,9 +150,11 @@ client.on("message",async(message) => {
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
     const parsed = msgfinal.replace(/hash/i,"").trim();
+    const hssplit = parsed.split(" ");
     try{
-      const hashed = await hash(viesti[2],({"algorithm":`${viesti[3]}`}));
-      await message.reply(`hash of ${viesti[2]} in ${viesti[3]} is [${hashed}]`);
+      const hash_ = crypto.createHash(`${hssplit[0]}`)
+      hash_.update(`${hssplit[1]}`)
+      await message.reply(`hash of ${hssplit[1]} in ${hssplit[0]} is [${hash_.digest("hex")}]`);
   }catch{Error};
   }
 /* -------------------------- Weather ----------------------------------- */
