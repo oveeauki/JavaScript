@@ -1,4 +1,4 @@
-const c = {
+export const c = {
     reset: '\033[0m',
     black: '\033[30m',
     red: '\033[31m',
@@ -18,4 +18,3 @@ const c = {
     cyanBg: '\033[46m',
     whiteBg: '\033[47m'
 }
-module.exports = {c};
