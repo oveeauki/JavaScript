@@ -6,14 +6,30 @@ import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type: "json"}
 import claude from "@anthropic-ai/sdk"
 import {dateformat,urlformat} from "./Dateformatter.js"
-import ax from "axios"
 import {condcheck} from "./condcheck.js"
+import axios from "axios"
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
-const client = new Discord.Client();
 const _claudeai = new claude({apiKey: cf.claudeai_t});
 const Weather_API_t = cf.Weatherapi_t;
 const sys = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise"
+
+export class pubmed{
+  constructor(comp){
+    this.comp = comp
+}
+  async pubmedcall(){
+    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/`
+    const res = await ax.get(url);
+}
+  async pubmedimage(){
+    let jo;
+    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${this.comp}/PNG`
+    const ax = await axios.get(url,{responseType:"arraybuffer"}).then(dat => jo = dat.data)
+    const imageBuffer = Buffer.from(jo);
+    this.ju = imageBuffer
+}
+}
 
 export class claudeaiapi {
   constructor(inputmsg) {
@@ -40,7 +56,7 @@ export class AIAPI {
   async apifetch() {
     const resp = await aicli.chat.completions.create({ // GPT-3
       model: "gpt-3.5-turbo-0125",
-      messages: [{ role: "user", content: this.inp }],
+      messages: [{ role: "user", content: this.inp}],
       temperature: 0.2
     }).then(respp => {
       this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g,'');
@@ -75,7 +91,7 @@ export class weatherapi{
         let __message;
         const encodedChoice = encodeURIComponent(inp);
         let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${encodedChoice}}&aqi=no`
-        const fetc = await ax.get(url).then(dat => {__message = dat.data});
+        const fetc = await axios.get(url).then(dat => {__message = dat.data});
         let city = __message.location.name, country = __message.location.country;
         let region = __message.location.region, time = __message.location.localtime,timesplitted = time.split(" ");
         let lat = __message.location.lat,lon = __message.location.lon;
@@ -119,7 +135,7 @@ export class weatherapi{
     let __forecaster;
       const encodedChoice = encodeURIComponent(input);
       let url = `http://api.weatherapi.com/v1/forecast.json?key=${Weather_API_t}&q={${encodedChoice}}&days=5`
-      const fetc = await ax.get(url).then(dat => {__forecaster = dat.data});
+      const fetc = await axios.get(url).then(dat => {__forecaster = dat.data});
 
       let city = __forecaster.location.name,country = __forecaster.location.country;
       let region = __forecaster.location.region;
