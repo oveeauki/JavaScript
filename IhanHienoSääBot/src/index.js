@@ -10,8 +10,9 @@ import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
 import axios from "axios"
 import claude from "@anthropic-ai/sdk"
-import {AIAPI,claudeaiapi,weatherapi} from "../Modules/apis.js" 
+import {AIAPI,claudeaiapi,weatherapi,pubmed} from "../Modules/apis.js" 
 import crypto from "node:crypto" 
+import { MessageAttachment } from "discord.js"
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const client = new Discord.Client();
@@ -71,6 +72,19 @@ client.on("message",async(message) => {
   let viesti = message.content.split(" ")
   const myid = "300648311067508754";
   const choice = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
+ /*----------------------------------------------------------------------------------------*/
+  if((message.content.startsWith(".") && msgfinal.includes("pstruct")) && !message.author.bot){
+   try{
+     const shit = msgfinal.replace(/pstruct/i,'').trim();
+    const pb = new pubmed(shit);
+    await pb.pubmedimage()
+    const att = new MessageAttachment(pb.ju,"image.png")
+    await message.reply({
+      files:[att] 
+  })
+}catch{Error}
+  }
+
 /*--------------------------------Message Channel BulkDelete----------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("delete")) && message.author.id == myid){
     try{
