@@ -18,7 +18,7 @@ export class pubmed{
   constructor(comp){
     this.comp = comp
 }
-  async pubmedcall(){
+  async pubmedcall(){ // Not Finished
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/`
     const res = await ax.get(url);
 }
