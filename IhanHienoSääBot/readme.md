@@ -1,6 +1,6 @@
 ## A Bot Made for Private Discord Servers
 
-#### Replace the config import in the **src/index.js** also in the **Modules/apis.js**
+#### Replace the config import in the **Modules/apis.js**
 ```js
 // Remember to modify the code accordingly for your config
 import cf from "../Config/config.json" assert {type:"json"}
