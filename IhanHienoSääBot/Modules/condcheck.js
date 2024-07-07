@@ -1,14 +1,15 @@
+// Weather Condition Emojis Handle
 export function condcheck(cond){
-
   const we = {
   "Partly Cloudy ":"⛅",
-  "Sunny": "☀️",
-  "Cloudy": "☁️",
-  "Rain": "🌧️",
+  "Overcast":"⛅",
+  "Sunny":"☀️",
+  "Cloudy":"☁️",
+  "Rain":"🌧️",
   "Moderate rain":"🌧️",
   "Heavy rain":"🌧️🌧️",
   "Patchy rain nearby":"🌦️",
-  "Snow": "❄️"
+  "Snow":"❄️"
 }
 
 const conditionEmoji = we[cond];
