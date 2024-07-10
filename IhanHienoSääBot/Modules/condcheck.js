@@ -2,8 +2,10 @@
 export function condcheck(cond){
   const we = {
   "Partly Cloudy ":"⛅",
+  "Partly cloudy":"⛅",
   "Overcast":"⛅",
   "Sunny":"☀️",
+  "Clear":"☀️",
   "Cloudy":"☁️",
   "Rain":"🌧️",
   "Moderate rain":"🌧️",
