@@ -7,7 +7,6 @@ bc of message max length in discord api
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
-import axios from "axios"
 import {AIAPI,claudeaiapi,weatherapi,pubmed} from "../Modules/apis.js" 
 import crypto from "node:crypto" 
 
