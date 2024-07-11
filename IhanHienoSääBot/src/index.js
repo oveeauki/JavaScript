@@ -4,19 +4,14 @@
 @todo add chunk splitter as 2nd optional condition 
 bc of message max length in discord api
                                                 **/
-import {OpenAI} from "openai"
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
 import axios from "axios"
-import claude from "@anthropic-ai/sdk"
 import {AIAPI,claudeaiapi,weatherapi,pubmed} from "../Modules/apis.js" 
 import crypto from "node:crypto" 
-import { MessageAttachment } from "discord.js"
 
-const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const client = new Discord.Client();
-const _claudeai = new claude({apiKey:cf.claudeai_t});
 
 var prfx = "!";
 
@@ -73,17 +68,20 @@ client.on("message",async(message) => {
   const myid = "300648311067508754";
   const choice = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
  /*----------------------------------------------------------------------------------------*/
-  if((message.content.startsWith(".") && msgfinal.includes("pstruct")) && !message.author.bot){
+//if(message.channel.type == "dm"){ } // Todo help page in dm and info
+
+/*--------------------------------PubChem API----------------------------------------------*/
+  if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
    try{
-     const shit = msgfinal.replace(/pstruct/i,'').trim();
+     const shit = msgfinal.replace(/pstr/i,'').trim();
     const pb = new pubmed(shit);
     await pb.pubmedimage()
-    const att = new MessageAttachment(pb.ju,"image.png")
+    const att = new Discord.MessageAttachment(pb.ju,"image.png")
     await message.reply({
       files:[att] 
   })
 }catch{Error}
-  }
+}
 
 /*--------------------------------Message Channel BulkDelete----------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("delete")) && message.author.id == myid){
