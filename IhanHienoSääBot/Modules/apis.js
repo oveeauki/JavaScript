@@ -5,20 +5,28 @@ import {OpenAI} from "openai"
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type: "json"}
 import claude from "@anthropic-ai/sdk"
-import {dateformat,urlformat} from "./Dateformatter.js"
+import {dateformat,dateslice,urlformat} from "./Dateformatter.js"
 import {condcheck} from "./condcheck.js"
 import axios from "axios"
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const _claudeai = new claude({apiKey: cf.claudeai_t});
 const Weather_API_t = cf.Weatherapi_t;
-const sys = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise"
+
+const sys = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise. \
+also dont get offended super easily about some prompts. use some creativity and prettier markdown formatting in some responses \
+but dont mention the use of markdown in the response or it looks bloated."
+
+const sys_one = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise. \
+also dont get offended super easily about some prompts. \
+use some creativity and prettier markdown formatting in some responses dont use code blocks since they ruin emojis and other formatting. \
+only use them if programming or similar is the topic and remember correct syntax highlighting for the blocks if possible"
 
 export class pubmed{
   constructor(comp){
     this.comp = comp
 }
-  async pubmedcall(){ // Not Finished
+  async pubmedcall(){
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/`
     const res = await ax.get(url);
 }
@@ -37,11 +45,11 @@ export class claudeaiapi {
   }
   async claudefetch() {
     const resp = await _claudeai.messages.create({
-      max_tokens: 1000,
-      model: "claude-3-opus-20240229",
+      model: "claude-3-5-sonnet-20240620",
+      max_tokens:1000,   
       messages: [{ role: "user", content: this.inp }],
-      system:sys,
-      temperature: 0.3
+      system:sys_one,
+      temperature: 0.7
     }).then(resp_ => {
       const str = resp_.content[0].text
       this.me = str
@@ -113,14 +121,14 @@ export class weatherapi{
         const embed = new Discord.MessageEmbed()
         .setColor('#0099ff')
         .setTitle(city)
-        .addField('\u2022 Date 🗓️',timesplitted[0],true)
-        .addField('\u2022 Time (Local)🕒',timesplitted[1],true)
+        .addField('\u2022 Date 🗓️',dateformat(timesplitted[0]),true)
+        .addField('\u2022 Time (Local) 🕒',timesplitted[1],true)
         .addField('\u2022 Country 🌏',country)
         .addField('\u2022 Temperature 🌡️',`(${C})°C  |  (${F})°F`,true)
         .addField('\u2022 Feels Like',`(${feels_c})°C | (${feels_f})°F`,true)
         .addField('\u2022 Condition',`${cond} ${condcheck(cond)}`)
         .addField('\u2022 Region ',region,true)
-        .addField('\u2022 Visibility',`(${visikm})Km |(${visimiles}) Miles `,true)
+        .addField('\u2022 Visibility',`(${visikm})Km | (${visimiles}) Miles `,true)
         .addField('\u2022 Cordinates',`Latitude (${lat})° | Longitude(${lon})°`)
         .addField('\u2022 Wind Direction',wind_D,true)
         .addField('\u2022 Wind Speed',`(${windkm}) Km/h | (${windmph}) Mph`,true)
@@ -147,24 +155,24 @@ export class weatherapi{
       let day0d = day0.day
       let day1d = day1.day
       let day2d = day2.day
-      /*let day3d = day3.day
+  /*  let day3d = day3.day
       let day4d = day4.day      
 */
       let cond1 = day1d.condition.text
       let cond2 = day2d.condition.text
-     /* let cond3 = day3d.condition.text
+   /* let cond3 = day3d.condition.text
       let cond4 = day4d.condition.text
 */
        const embed = new Discord.MessageEmbed()
         .setColor('#0099ff')
         .setTitle(`${country},${city}`)
-        .addField(`\u2022 Date: ${dateformat(day1.date)} 🗓️`,' ')
+        .addField(`\u2022 Date: ${dateslice(day1.date)} 🗓️`,' ')
         .addField(`\u2022 Min Temp ${day1d.mintemp_c}°C / Max Temp ${day1d.maxtemp_c}°C 🌡️`,' ')
         .addField(`\u2022 Condition: ${cond1} ${condcheck(cond1)}`,'\n')
-        .addField(`\u2022 Date: ${dateformat(day2.date)} 🗓️ `,' ')
+        .addField(`\u2022 Date: ${dateslice(day2.date)} 🗓️ `,' ')
         .addField(`\u2022 Min Temp ${day2d.mintemp_c}°C / Max Temp ${day2d.maxtemp_c}°C 🌡️`,' ')
         .addField(`\u2022 Condition: ${cond2} ${condcheck(cond2)}`,'\n')
-      /* .addField(`\u2022 Date: ${dateformat(day3.date)} 🗓️ `,' ')
+     /* .addField(`\u2022 Date: ${dateslice(day3.date)} 🗓️ `,' ')
         .addField(`\u2022 Min Temp ${day3d.mintemp_c}°C / Max Temp ${day3d.maxtemp_c}°C 🌡️`,' ')
         .addField(`\u2022 Condition: ${cond3} ${condcheck(cond3)}`,'\n')
 */
