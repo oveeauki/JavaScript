@@ -1,6 +1,7 @@
 // Weather Condition Emojis Handle
 export function condcheck(cond){
   const we = {
+  "Light drizzle":"🌧️",
   "Partly Cloudy ":"⛅",
   "Partly cloudy":"⛅",
   "Overcast":"⛅",
