@@ -12,6 +12,7 @@ export function condcheck(cond){
   "Moderate rain":"🌧️",
   "Heavy rain":"🌧️🌧️",
   "Patchy rain nearby":"🌦️",
+  "Patchy light drizzle":":🌦️",
   "Light rain":"🌦️",
   "Snow":"❄️"
 }
