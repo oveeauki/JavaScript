@@ -1,4 +1,5 @@
 // Weather Condition Emojis Handle
+// TODO: change the API to some other less ridiculous one that has no duplicate conditions and fewer in general...
 export function condcheck(cond){
   const we = {
   "Light drizzle":"🌧️",
