@@ -8,7 +8,7 @@ async function formatBase64String(base64String,lineLength = 80){
   for(let i=0;i<base64String.length;i += lineLength){
     chunks.push(base64String.slice(i,i+lineLength));
   }
-  return('"' + chunks.join('" + \n"') + '";');
+  return('"' + chunks.join('\\ \n') + '"');
 }
 
 function base64ToBuffer(b64){
