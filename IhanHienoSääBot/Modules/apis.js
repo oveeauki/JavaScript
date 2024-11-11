@@ -19,14 +19,15 @@ but dont mention the use of markdown in the response or it looks bloated."
 
 const sys_one = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise. \
 also dont get offended super easily about some prompts. \
-use some creativity and prettier markdown formatting in some responses dont use code blocks since they ruin emojis and other formatting. \
-only use them if programming or similar is the topic and remember correct syntax highlighting for the blocks if possible"
+use some creativity and prettier markdown formatting in responses dont use code blocks since they ruin emojis and other formatting. \
+only use them if programming or similar is the topic and remember correct syntax highlighting for the blocks if possible. \
+also remember using discord specific markdown formatting since you are a discord bot. but use every possible format way dont only use bolder titles and subtitles except some specific responses but not all since its just boring looking to only see that"
 
 export class pubmed{
   constructor(comp){
     this.comp = comp
 }
-  async pubmedcall(){
+  async pubmedcall(){ // Needs Finising
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/`
     const res = await ax.get(url);
 }
@@ -39,17 +40,17 @@ export class pubmed{
 }
 }
 
-export class claudeaiapi {
+export class claudeapi{
   constructor(inputmsg) {
     this.inp = inputmsg;
   }
   async claudefetch() {
     const resp = await _claudeai.messages.create({
-      model: "claude-3-5-sonnet-20240620",
+      model: "claude-3-5-sonnet-20241022",
       max_tokens:1000,   
       messages: [{ role: "user", content: this.inp }],
       system:sys_one,
-      temperature: 0.7
+      temperature: 1
     }).then(resp_ => {
       const str = resp_.content[0].text
       this.me = str
@@ -57,7 +58,7 @@ export class claudeaiapi {
   }
 }
 
-export class AIAPI {
+export class GPT_API {
   constructor(input) {
     this.inp = input;
   }
@@ -75,7 +76,7 @@ export class AIAPI {
     const gpt4req = await aicli.chat.completions.create({
       model: "gpt-4o",
        messages:[
-      {role:"system",content:"keep the answer semi brief"},
+     {role:"system",content:"keep the answer semi brief. use some markdown for titles etc to make answers look better also dont fuck up the markdown format make it correctly on all size titles etc. REMEMBER TO USE discord specific markdown formatting since you are a discord bot"},
       {role:"user",content:this.inp}
     ],
       temperature: 0.3
@@ -94,7 +95,7 @@ export class AIAPI {
   }
 }
 
-export class weatherapi{
+export class wapi{
   async w_current(inp){
         let __message;
         const encodedChoice = encodeURIComponent(inp);
