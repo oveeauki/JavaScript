@@ -7,7 +7,8 @@ bc of message max length in discord api
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
-import {AIAPI,claudeaiapi,weatherapi,pubmed} from "../Modules/apis.js" 
+import {GPT_API,claudeapi,wapi,pubmed} from "../Modules/apis.js" 
+import {hashopt,help} from "../Modules/help.js"
 import crypto from "node:crypto" 
 
 const client = new Discord.Client();
@@ -20,7 +21,7 @@ class timer{
   constructor(){
     this.dallecount = 0;
 }
-  timer___ (){
+  get_time(){
     const date = new Date();
     this.mins = date.getMinutes();
     this.hours = date.getHours();
@@ -32,8 +33,8 @@ class timer{
     return(total);
 }
 start(){
-  this.timerid = setInterval(() => {
-    const res = this.timer___();
+  this.timer = setInterval(() => {
+    const res = this.get_time();
     },500);
   }
 }
@@ -58,21 +59,29 @@ client.once("ready",async() => {
 });
 
 client.on("message",async(message) => {
-  const msgfinal = message.content
-                  .replace(/[!.]/i,"")
-                  .trim()
-                  .toLowerCase();
+  const msgfinal = message.content.replace(/[!.]/i,"")
+                                  .trim()
+                                  .toLowerCase();
   const opts = ["gpt4","dalle","hash","claude"]
   let viesti = message.content.split(" ")
   const myid = "300648311067508754";
-  const choice = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
+  const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
  /*----------------------------------------------------------------------------------------*/
-//if(message.channel.type == "dm"){ } // Todo help page in dm and info
+
+// Help For Channel
+if((message.content.startsWith(".") && msgfinal.startsWith("help")) && !message.author.bot){
+  const embd = help();
+  await message.reply(embd);
+}
+else if(message.channel.type == "dm" && !message.author.bot){
+  const embd = help();
+  await message.reply(embd);
+}
 
 /*--------------------------------PubChem API----------------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
    try{
-     const shit = msgfinal.replace(/pstr/i,'').trim();
+    const shit = msgfinal.replace(/pstr/i,'').trim();
     const pb = new pubmed(shit);
     await pb.pubmedimage()
     const att = new Discord.MessageAttachment(pb.ju,"image.png")
@@ -88,7 +97,7 @@ client.on("message",async(message) => {
       const parsed = message.content.match(/\d+/);
       const int = parseInt(parsed);
       message.channel.bulkDelete(int+1);
-      message.channel.send(`I deleted [${int}] messages`).then(msg => msg.delete({timeout:10000}));
+      message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:10000}));
   }catch{Error}
   }
   else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
@@ -97,9 +106,8 @@ client.on("message",async(message) => {
 /* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
     _timer.dallecount++;
-    //console.log(_timer.dallecount)
     const shit = msgfinal.replace(/dalle/i,'').trim();
-    let api = new AIAPI(shit);
+    let api = new GPT_API(shit);
     message.channel.startTyping();
       try{
         await api.dall_e();
@@ -117,13 +125,13 @@ client.on("message",async(message) => {
     message.reply(msg).then(msg => msg.delete({timeout:10000}))
   }
 /*----------------------------------------------------------------------------------------------*/
-
+                                   
 /*--------------------Claude Ai-------------------------------------------------------------*/
   if((message.content.startsWith(prfx) && msgfinal.startsWith("claude")) && message.content.length > 2){
     const shit = msgfinal.replace(/claude/i,'');
+    let aiclaude = new claudeapi(shit)
     message.channel.startTyping();
     try{
-      let aiclaude = new claudeaiapi(shit)
       await aiclaude.claudefetch();
       await message.reply(aiclaude.me);
       }catch{Error} 
@@ -133,13 +141,13 @@ client.on("message",async(message) => {
   if((message.content.startsWith(prfx) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
     message.channel.startTyping();
     try{
-      let api = new AIAPI(msgfinal);
+      let api = new GPT_API(msgfinal);
       await api.apifetch();
       await message.reply(api.em);
       }catch{Error} 
       message.channel.stopTyping();
   }
-  else if(message.content.startsWith(prfx) && message.content.length <= 2){
+  else if(message.content.startsWith(prfx) && message.content.length <= 2 && !message.author.bot){
     message.reply("<:joo:1039729807933579274>");
   }
 
@@ -148,7 +156,7 @@ client.on("message",async(message) => {
     const shit = msgfinal.replace(/gpt4/i,'').trim();
     message.channel.startTyping();
     try{
-      let api = new AIAPI(shit);
+      let api = new GPT_API(shit);
       await api.apigpt4();
       await message.reply(api.me);
       }catch{Error} 
@@ -160,6 +168,12 @@ client.on("message",async(message) => {
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
     const parsed = msgfinal.replace(/hash/i,"").trim();
+    switch(parsed){
+      case "help":
+        let res = await hashopt();
+        await message.reply(res);
+        break;
+      }
     const hssplit = parsed.split(" ");
     try{
       const hash_ = crypto.createHash(`${hssplit[0]}`)
@@ -170,17 +184,17 @@ client.on("message",async(message) => {
 
 /* -------------------------- Weather ----------------------------------- */
   if((viesti[0] == ".w" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("weather"))){
-  try{
-    const w_api = new weatherapi();
-    await w_api.w_current(choice);
-    await message.reply(w_api.res)
+    try{
+      const wa = new wapi();
+      await wa.w_current(w_param);
+      await message.reply(wa.res)
     }catch{Error}
   }
   else if((viesti[0] == ".f" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("forecast"))){
     try{
-    const w_api = new weatherapi();
-    await w_api.w_fech(choice);
-    await message.reply(w_api.emb);
+      const wa = new wapi();
+      await wa.w_fech(w_param);
+      await message.reply(wa.emb);
   }catch{Error}
 }
 });
