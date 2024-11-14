@@ -23,8 +23,9 @@ export async function hashopt(){
   return new Promise((res) => {
     exec("'openssl' list -digest-algorithms",(er,stdout,stderr) => {
       if(!(er) || !(stderr)){
-        const tr = stdout.split("Provided:")[0]?.trim();
-        res(tr)
+        const tr = stdout.split("Provided:")[0]?.replace(/Legacy:/i,"").trim();
+        const msgbox = `These Are The Available Hashing Algos\`\`\`\n${tr}\n\`\`\``;
+        res(msgbox)
     }
       else{
         res(stderr);
