@@ -96,12 +96,12 @@ else if(message.channel.type == "dm" && !message.author.bot){
     try{
       const parsed = message.content.match(/\d+/);
       const int = parseInt(parsed);
-      message.channel.bulkDelete(int+1);
-      message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:10000}));
+      await message.channel.bulkDelete(int+1);
+      await message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:10000}));
   }catch{Error}
   }
   else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
-    message.reply("<:bro:968649274281840640>")
+    await message.reply("<:bro:968649274281840640>")
   }
 /* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
@@ -147,12 +147,12 @@ else if(message.channel.type == "dm" && !message.author.bot){
       }catch{Error} 
       message.channel.stopTyping();
   }
-  else if(message.content.startsWith(prfx) && message.content.length <= 2 && !message.author.bot){
-    message.reply("<:joo:1039729807933579274>");
+  else if((message.content.startsWith(prfx) && !message.author.bot) && message.content.length <= 1){
+    await message.reply("<:joo:1039729807933579274>");
   }
 
 /* ----------------------- Open Ai API GPT4 --------------------------------------------------------------- */
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("gpt4")) && message.content.length > 2){
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("gpt4")) && !message.author.bot){
     const shit = msgfinal.replace(/gpt4/i,'').trim();
     message.channel.startTyping();
     try{
@@ -161,9 +161,6 @@ else if(message.channel.type == "dm" && !message.author.bot){
       await message.reply(api.me);
       }catch{Error} 
       message.channel.stopTyping();
-  }
-  else if(message.content.startsWith(prfx) && message.content.length <= 2){
-    message.reply("<:joo:1039729807933579274>");
   }
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
