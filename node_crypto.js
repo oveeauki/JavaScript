@@ -5,7 +5,7 @@
 4 bytes (32 bits)
 8 bytes (64 bits)
 16 bytes (128 bits) 
-                                  */
+                                */
 import rl from "readline"
 import cp from "node:crypto"
 import {stdin,stdout,exit} from "process"
@@ -18,7 +18,7 @@ output:stdout
 class crypt {
   constructor(size){
     this.saltbuf = Buffer.alloc(size);
-    this.iv = Buffer.alloc(16);
+    this.iv = Buffer.alloc(size);
 }
    randomsalt_iv_gen(){
     let res = cp.randomFill(this.saltbuf,(err,buf) => {
@@ -47,7 +47,7 @@ const main = async() => {
   const c = new crypt(16);
   c.randomsalt_iv_gen();
   var key = await c.keygen("jeps",c.saltbuf,16);
-  console.log("Sizeof key(0x%s)",key.toString("hex").toUpperCase())
+  console.log("Keygen Returned...(0x%s)\n",key.toString("hex").toUpperCase())
   let cph = cp.createCipheriv("aes-128-gcm",key,c.iv);
   r.question("Enter Word\n\u279c ",(i) => {
     const res = cph.update(i,"utf-8","hex").toUpperCase();
