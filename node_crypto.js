@@ -11,8 +11,8 @@ import cp from "node:crypto"
 import {stdin,stdout,exit} from "process"
 
 const r = rl.createInterface({
-input:stdin,
-output:stdout
+  input:stdin,
+  output:stdout
 })
 
 class crypt {
