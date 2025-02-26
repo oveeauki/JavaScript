@@ -7,7 +7,8 @@ bc of message max length in discord api
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
-import {GPT_API,claudeapi,wapi,pubmed} from "../Modules/apis.js" 
+import {API_Obj} from "../Modules/apis.js"
+import {rr} from "../Modules/CRC32.js"
 import {hashopt,help} from "../Modules/help.js"
 import crypto from "node:crypto" 
 
@@ -15,13 +16,13 @@ const client = new Discord.Client();
 
 var prfx = "!";
 
-client.login(cf.token);
+client.login(cf.discord_t);
 
 class timer{
   constructor(){
     this.dallecount = 0;
 }
-  get_time(){
+  get_time(){ 
     const date = new Date();
     this.mins = date.getMinutes();
     this.hours = date.getHours();
@@ -32,11 +33,11 @@ class timer{
   }
     return(total);
 }
-start(){
-  this.timer = setInterval(() => {
-    const res = this.get_time();
-    },500);
-  }
+  start(){
+    this.timer = setInterval(() => {
+      const res = this.get_time();
+      },500);
+    }
 }
 
 let disp = () => {
@@ -59,6 +60,7 @@ client.once("ready",async() => {
 });
 
 client.on("message",async(message) => {
+  const api = new API_Obj();
   const msgfinal = message.content.replace(/[!.]/i,"")
                                   .trim()
                                   .toLowerCase();
@@ -78,13 +80,22 @@ else if(message.channel.type == "dm" && !message.author.bot){
   await message.reply(embd);
 }
 
+if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.author.bot){
+   try{
+    message.channel.startTyping();
+    const [a,b,c] = msgfinal.replace(/crc32/i,'').trim().split(" ");
+    var ms = await rr(a,b,c);
+    const msgbox = `\`\`\`\n${ms}...\n\`\`\``;
+    await message.reply(msgbox);
+    message.channel.stopTyping();
+  }catch{Error}
+}
 /*--------------------------------PubChem API----------------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
    try{
     const shit = msgfinal.replace(/pstr/i,'').trim();
-    const pb = new pubmed(shit);
-    await pb.pubmedimage()
-    const att = new Discord.MessageAttachment(pb.ju,"image.png")
+    await api.pubmedimage(shit);
+    const att = new Discord.MessageAttachment(api.ju,"image.png")
     await message.reply({
       files:[att] 
   })
@@ -97,7 +108,7 @@ else if(message.channel.type == "dm" && !message.author.bot){
       const parsed = message.content.match(/\d+/);
       const int = parseInt(parsed);
       await message.channel.bulkDelete(int+1);
-      await message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:10000}));
+      await message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:5000}));
   }catch{Error}
   }
   else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
@@ -107,13 +118,12 @@ else if(message.channel.type == "dm" && !message.author.bot){
   if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
     _timer.dallecount++;
     const shit = msgfinal.replace(/dalle/i,'').trim();
-    let api = new GPT_API(shit);
-    message.channel.startTyping();
+     message.channel.startTyping();
       try{
-        await api.dall_e();
+        await api.dall_e(shit);
         await message.reply({
           files:[{
-            attachment:api.me,
+            attachment:api.dalle_l,
             name:"image.png"
         }] 
     });
@@ -122,18 +132,17 @@ else if(message.channel.type == "dm" && !message.author.bot){
   }
   else if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && (_timer.dallecount > 2 && !message.author.bot)){
     const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
-    message.reply(msg).then(msg => msg.delete({timeout:10000}))
+    await message.reply(msg).then(msg => msg.delete({timeout:10000}))
   }
 /*----------------------------------------------------------------------------------------------*/
-                                   
+
 /*--------------------Claude Ai-------------------------------------------------------------*/
   if((message.content.startsWith(prfx) && msgfinal.startsWith("claude")) && message.content.length > 2){
     const shit = msgfinal.replace(/claude/i,'');
-    let aiclaude = new claudeapi(shit)
     message.channel.startTyping();
     try{
-      await aiclaude.claudefetch();
-      await message.reply(aiclaude.me);
+      await api.claudefetch(shit);
+      await message.reply(api.cldans);
       }catch{Error} 
       message.channel.stopTyping();
   }
@@ -141,9 +150,8 @@ else if(message.channel.type == "dm" && !message.author.bot){
   if((message.content.startsWith(prfx) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
     message.channel.startTyping();
     try{
-      let api = new GPT_API(msgfinal);
-      await api.apifetch();
-      await message.reply(api.em);
+      await api.apifetch(msgfinal);
+      await message.reply(api.gpt3ans);
       }catch{Error} 
       message.channel.stopTyping();
   }
@@ -156,11 +164,10 @@ else if(message.channel.type == "dm" && !message.author.bot){
     const shit = msgfinal.replace(/gpt4/i,'').trim();
     message.channel.startTyping();
     try{
-      let api = new GPT_API(shit);
-      await api.apigpt4();
-      await message.reply(api.me);
-      }catch{Error} 
-      message.channel.stopTyping();
+      await api.gpt4(shit);
+      await message.reply(api.gpt4ans);
+     }catch{Error} 
+    message.channel.stopTyping();
   }
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
@@ -182,16 +189,14 @@ else if(message.channel.type == "dm" && !message.author.bot){
 /* -------------------------- Weather ----------------------------------- */
   if((viesti[0] == ".w" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("weather"))){
     try{
-      const wa = new wapi();
-      await wa.w_current(w_param);
-      await message.reply(wa.res)
+      await api.w_current(w_param);
+      await message.reply(api.wapires)
     }catch{Error}
   }
-  else if((viesti[0] == ".f" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("forecast"))){
+  else if(viesti[0] == ".f" && !message.author.bot){
     try{
-      const wa = new wapi();
-      await wa.w_fech(w_param);
-      await message.reply(wa.emb);
+      await api.w_fech(w_param);
+      await message.reply(api.emb);
   }catch{Error}
 }
 });
