@@ -8,7 +8,7 @@ import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import {stdin,stdout,exit} from "process"
 import {API_Obj} from "../Modules/apis.js"
-import {rr} from "../Modules/CRC32.js"
+import {crc32,XOR} from "../Modules/Randalgos.js"
 import {hashopt,help} from "../Modules/help.js"
 import crypto from "node:crypto" 
 
@@ -84,18 +84,30 @@ if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.a
    try{
     message.channel.startTyping();
     const [a,b,c] = msgfinal.replace(/crc32/i,'').trim().split(" ");
-    var ms = await rr(a,b,c);
+    var ms = await crc32(a,b,c);
     const msgbox = `\`\`\`\n${ms}...\n\`\`\``;
     await message.reply(msgbox);
     message.channel.stopTyping();
   }catch{Error}
 }
+  
+if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.author.bot){
+   try{
+    message.channel.startTyping();
+    const [str,key] = msgfinal.replace(/xor/i,'').trim().split(" ");
+    var ms = await XOR(str,key);
+    const msgbox = `\`\`\`\nXorred with key ${key} (${ms}) \n\`\`\``;
+    await message.reply(msgbox);
+    message.channel.stopTyping();
+  }catch{Error}
+}
+
 /*--------------------------------PubChem API----------------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
    try{
     const shit = msgfinal.replace(/pstr/i,'').trim();
     await api.pubmedimage(shit);
-    const att = new Discord.MessageAttachment(api.ju,"image.png")
+    const att = new Discord.MessageAttachment(api.pbimg,"image.png")
     await message.reply({
       files:[att] 
   })
@@ -172,13 +184,13 @@ if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.a
 /* -------------------------- Hashing ----------------------------------- */
   if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
     const parsed = msgfinal.replace(/hash/i,"").trim();
+    const hssplit = parsed.split(" ");
     switch(parsed){
       case "help":
         let res = await hashopt();
         await message.reply(res);
         break;
       }
-    const hssplit = parsed.split(" ");
     try{
       const hash_ = crypto.createHash(`${hssplit[0]}`)
       hash_.update(`${hssplit[1]}`)
