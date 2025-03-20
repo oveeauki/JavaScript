@@ -6,11 +6,11 @@ bc of message max length in discord api
                                                 **/
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
-import {stdin,stdout,exit} from "process"
+import crypto from "node:crypto" 
+import {stdout} from "process"
 import {API_Obj} from "../Modules/apis.js"
 import {crc32,XOR} from "../Modules/Randalgos.js"
 import {hashopt,help} from "../Modules/help.js"
-import crypto from "node:crypto" 
 
 const client = new Discord.Client();
 
@@ -64,7 +64,7 @@ client.on("message",async(message) => {
   const msgfinal = message.content.replace(/[!.]/i,"")
                                   .trim()
                                   .toLowerCase();
-  const opts = ["gpt4","dalle","hash","claude"]
+  const opts = ["gpt4","dalle","hash","cld"]
   let viesti = message.content.split(" ")
   const myid = "300648311067508754";
   const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
@@ -90,15 +90,20 @@ if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.a
     message.channel.stopTyping();
   }catch{Error}
 }
-  
+
 if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.author.bot){
    try{
-    message.channel.startTyping();
     const [str,key] = msgfinal.replace(/xor/i,'').trim().split(" ");
-    var ms = await XOR(str,key);
-    const msgbox = `\`\`\`\nXorred with key ${key} (${ms}) \n\`\`\``;
-    await message.reply(msgbox);
-    message.channel.stopTyping();
+    if(/0x/.test(key)){
+      var ms = await XOR(str,key);
+      const msgbox = `\`\`\`Key:[${key}]\
+
+                          \n${ms}\`\`\``
+      await message.reply(msgbox);
+    }
+    else{
+      await message.reply(`Error. Use Keys in Hex Form (0x.....)`).then(msg => msg.delete({timeout:10000}));
+    }
   }catch{Error}
 }
 
@@ -121,7 +126,7 @@ if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.aut
       const int = parseInt(parsed);
       await message.channel.bulkDelete(int+1);
       await message.channel.send(`Removed [${int}] Messages`).then(msg => msg.delete({timeout:5000}));
-  }catch{Error}
+    }catch{Error}
   }
   else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
     await message.reply("<:bro:968649274281840640>")
@@ -130,13 +135,13 @@ if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.aut
   if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
     _timer.dallecount++;
     const shit = msgfinal.replace(/dalle/i,'').trim();
-     message.channel.startTyping();
-      try{
-        await api.dall_e(shit);
-        await message.reply({
-          files:[{
-            attachment:api.dalle_l,
-            name:"image.png"
+    message.channel.startTyping();
+    try{
+      await api.dall_e(shit);
+      await message.reply({
+        files:[{
+          attachment:api.dalle_l,
+          name:"image.png"
         }] 
     });
       }catch{Error} 
@@ -149,7 +154,7 @@ if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.aut
 /*----------------------------------------------------------------------------------------------*/
 
 /*--------------------Claude Ai-------------------------------------------------------------*/
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("claude")) && message.content.length > 2){
+  if((message.content.startsWith(prfx) && msgfinal.startsWith("cld")) && message.content.length > 2){
     const shit = msgfinal.replace(/claude/i,'');
     message.channel.startTyping();
     try{
