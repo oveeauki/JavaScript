@@ -4,14 +4,15 @@
 import Discord from "discord.js"
 import {exec} from "child_process"
 
-const helpmsg = 
-"Commands use prefix (!) for everything except weather commands (.)\n\
-(input) GPT 3.5\n\
-gpt4 (GPT-4o)\n\
-dalle (dalle image model)\n\
-hash (algo) (input)\n\
-.w (location) current weather\n\
-.f (location) weather forecast for 2 days\n"
+const helpmsg = "\
+\n  Commands use prefix (!) for everything except weather commands (.)\
+\n  (input) GPT 3.5\
+\n  gpt4 (GPT-4o)\
+\n  cld (Claude 3.8+)\
+\n  dalle (dalle image model)\
+\n  hash (algo) (input)\
+\n .w (location) current weather\
+\n .f (location) weather forecast for 2 days\n"
 
 export function help(){
   let embd = new Discord.MessageEmbed()
@@ -28,7 +29,7 @@ export async function hashopt(){
         res(msgbox)
     }
       else{
-        res(stderr);
+        res(stderr); 
       }
     })
 })
