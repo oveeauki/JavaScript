@@ -68,55 +68,56 @@ client.on("message",async(message) => {
   let viesti = message.content.split(" ")
   const myid = "300648311067508754";
   const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
+  const hexparser = /^0x[0-9a-fA-F]+$/;
  /*----------------------------------------------------------------------------------------*/
 
-// Help For Channel
-if((message.content.startsWith(".") && msgfinal.startsWith("help")) && !message.author.bot){
-  const embd = help();
-  await message.reply(embd);
-}
-else if(message.channel.type == "dm" && !message.author.bot){
-  const embd = help();
-  await message.reply(embd);
-}
+  // Help For Channel
+  if((message.content.startsWith(".") && msgfinal.startsWith("help")) && !message.author.bot){
+    const embd = help();
+    await message.reply(embd);
+  }
+  else if(message.channel.type == "dm" && !message.author.bot){
+    const embd = help();
+    await message.reply(embd);
+  }
 
-if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.author.bot){
-   try{
-    message.channel.startTyping();
-    const [a,b,c] = msgfinal.replace(/crc32/i,'').trim().split(" ");
-    var ms = await crc32(a,b,c);
-    const msgbox = `\`\`\`\n${ms}...\n\`\`\``;
-    await message.reply(msgbox);
-    message.channel.stopTyping();
-  }catch{Error}
-}
-
-if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.author.bot){
-   try{
-    const [str,key] = msgfinal.replace(/xor/i,'').trim().split(" ");
-    if(/0x/.test(key)){
-      var ms = await XOR(str,key);
-      const msgbox = `\`\`\`Key:[${key}]\
-
-                          \n${ms}\`\`\``
+  if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.author.bot){
+    try{
+      message.channel.startTyping();
+      const [a,b,c] = msgfinal.replace(/crc32/i,'').trim().split(" ");
+      var ms = await crc32(a,b,c);
+      const msgbox = `\`\`\`\n${ms}...\n\`\`\``;
       await message.reply(msgbox);
-    }
-    else{
-      await message.reply(`Error. Use Keys in Hex Form (0x.....)`).then(msg => msg.delete({timeout:10000}));
-    }
-  }catch{Error}
-}
+      message.channel.stopTyping();
+    }catch{Error}
+  }
+
+  if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.author.bot){
+    try{
+      const [str,key] = msgfinal.replace(/xor/i,'').trim().split(" ");
+      if(hexparser.test(key)){
+        var ms = await XOR(str,key);
+        const msgbox = `\`\`\`Key:[${key.toUpperCase()}]\
+
+                            \n${ms}\`\`\``
+        await message.reply(msgbox);
+      }
+      else{
+        await message.reply(`Error. Use Keys in Hex Range and Form (0x.....)`).then(msg => msg.delete({timeout:10000}));
+      }
+    }catch{Error}
+  }
 
 /*--------------------------------PubChem API----------------------------------------------*/
   if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
-   try{
-    const shit = msgfinal.replace(/pstr/i,'').trim();
-    await api.pubmedimage(shit);
-    const att = new Discord.MessageAttachment(api.pbimg,"image.png")
-    await message.reply({
-      files:[att] 
-  })
-}catch{Error}
+    try{
+      const shit = msgfinal.replace(/pstr/i,'').trim();
+      await api.pubmedimage(shit);
+      const att = new Discord.MessageAttachment(api.pbimg,"image.png")
+      await message.reply({
+        files:[att] 
+      })
+    }catch{Error}
 }
 
 /*--------------------------------Message Channel BulkDelete----------------------------------------*/
@@ -155,20 +156,20 @@ if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.aut
 
 /*--------------------Claude Ai-------------------------------------------------------------*/
   if((message.content.startsWith(prfx) && msgfinal.startsWith("cld")) && message.content.length > 2){
-    const shit = msgfinal.replace(/claude/i,'');
+    const shit = msgfinal.replace(/cld/i,'');
     message.channel.startTyping();
     try{
       await api.claudefetch(shit);
       await message.reply(api.cldans);
-      }catch{Error} 
-      message.channel.stopTyping();
+    }catch{Error} 
+    message.channel.stopTyping();
   }
 /* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
   if((message.content.startsWith(prfx) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
     message.channel.startTyping();
-    try{
-      await api.apifetch(msgfinal);
-      await message.reply(api.gpt3ans);
+      try{
+        await api.apifetch(msgfinal);
+        await message.reply(api.gpt3ans);
       }catch{Error} 
       message.channel.stopTyping();
   }
