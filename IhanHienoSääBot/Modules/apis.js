@@ -32,7 +32,7 @@ class pubmed {
   async pubmedimage(comp){
     let jo;
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/PNG`
-    const ax = await axios.get(url, { responseType: "arraybuffer" }).then(dat => jo = dat.data)
+    const ax = await axios.get(url,{responseType:"arraybuffer"}).then(dat => jo = dat.data)
     const imageBuffer = Buffer.from(jo);
     this.pbimg = imageBuffer
   }
@@ -41,7 +41,7 @@ class pubmed {
 class claudeapi extends pubmed {
   async claudefetch(inp) {
     const resp = await _claudeai.messages.create({
-      model: "claude-3-5-sonnet-20241022",
+      model: "claude-3-7-sonnet-latest",
       max_tokens: 1000,
       messages: [{ role: "user", content: inp }],
       system: sys_one,
@@ -59,20 +59,20 @@ class GPT_API extends claudeapi {
       messages: [{ role: "user", content: inp }],
       temperature: 0.2
     }).then(respp => {
-      this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g, '\n').replace(/^(["]|\s|\\n|\.)*|["]$/g, '');
-      this.gpt3ans = `\`\`\`\n${this.anws}\n\`\`\``;
+        this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g, '\n').replace(/^(["]|\s|\\n|\.)*|["]$/g, '');
+        this.gpt3ans = `\`\`\`\n${this.anws}\n\`\`\``;
     })
   }
   async gpt4(inp){ // GPT-4
     const gpt4req = await aicli.chat.completions.create({
-      model: "gpt-4o",
+      model: "o3-mini",
       messages: [
         {role: "system", content: "keep the answer semi brief. use some markdown for titles etc to make answers look better also dont fuck up the markdown format make it correctly on all size titles etc. REMEMBER TO USE discord specific markdown formatting since you are a discord bot" },
         {role: "user", content: inp}
       ],
       temperature: 0.3
     }).then(resp => {
-      this.gpt4ans = resp.choices[0].message.content
+        this.gpt4ans = resp.choices[0].message.content
     })
   }
   async dall_e(inp){
@@ -80,7 +80,8 @@ class GPT_API extends claudeapi {
       model: "dall-e-3",
       prompt: inp,
       n: 1,
-      size: "1024x1024"
+      size: "1024x1024",
+      quality:"hd"
     })
     this.dalle_l = dalle.data[0].url;
   }
@@ -122,13 +123,13 @@ class wapi extends GPT_API {
       .addField('\u2022 Condition', `${cond} ${condcheck(cond)}`)
       .addField('\u2022 Region', region, true)
       .addField('\u2022 Visibility', `(${visikm}) Km | (${visimiles}) Miles `, true)
-      .addField('\u2022 Cordinates', `Latitude (${lat}) ° | Longitude(${lon}) °`)
+      .addField('\u2022 Coordinates 📍', `Latitude (${lat}) ° | Longitude(${lon}) °`)
       .addField('\u2022 Wind Direction', wind_D, true)
       .addField('\u2022 Wind Speed', `(${windkm}) Km/h | (${windmph}) Mph`, true)
       .addField('\u2022 Humidity', `${humidity}%`)
       .addField('\u2022 Atmospheric Pressure', `(${atmosmb}) Millibars`,true)
       .addField('\u2022 UV Index', uv, true)
-      .addField('\u2022 Is_Day Boolean xd', booleandayxd,);
+      .addField('\u2022 Is_Day Boolean xd', booleandayxd);
 
       this.wapires = embed
   }
