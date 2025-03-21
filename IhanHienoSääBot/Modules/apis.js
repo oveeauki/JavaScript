@@ -65,12 +65,12 @@ class GPT_API extends claudeapi {
   }
   async gpt4(inp){ // GPT-4
     const gpt4req = await aicli.chat.completions.create({
-      model: "o3-mini",
+      model: "chatgpt-4o-latest",
       messages: [
         {role: "system", content: "keep the answer semi brief. use some markdown for titles etc to make answers look better also dont fuck up the markdown format make it correctly on all size titles etc. REMEMBER TO USE discord specific markdown formatting since you are a discord bot" },
         {role: "user", content: inp}
       ],
-      temperature: 0.3
+      temperature: 0.1
     }).then(resp => {
         this.gpt4ans = resp.choices[0].message.content
     })
