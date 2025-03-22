@@ -55,7 +55,7 @@ client.once("ready",async() => {
   console.clear(); 
   _timer.start();
   disp();
-  await client.user.setActivity("Sää");      
+  await client.user.setActivity(".help for commands");      
   await client.user.setPresence({status:"dnd"});
 });
 
@@ -64,8 +64,8 @@ client.on("message",async(message) => {
   const msgfinal = message.content.replace(/[!.]/i,"")
                                   .trim()
                                   .toLowerCase();
-  const opts = ["gpt4","dalle","hash","cld"]
-  let viesti = message.content.split(" ")
+  const opts = ["gpt4","dalle","cld"]
+  let viesti = message.content.toLowerCase().split(" ");
   const myid = "300648311067508754";
   const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
   const hexparser = /^0x[0-9a-fA-F]+$/;
@@ -188,7 +188,7 @@ client.on("message",async(message) => {
     message.channel.stopTyping();
   }
 /* -------------------------- Hashing ----------------------------------- */
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("hash")) && !message.author.bot){
+  if((message.content.startsWith(".") && msgfinal.startsWith("hash")) && !message.author.bot){
     const parsed = msgfinal.replace(/hash/i,"").trim();
     const hssplit = parsed.split(" ");
     switch(parsed){
@@ -205,7 +205,7 @@ client.on("message",async(message) => {
   }
 
 /* -------------------------- Weather ----------------------------------- */
-  if((viesti[0] == ".w" && !message.author.bot) || (message.content.startsWith(".") && msgfinal.includes("weather"))){
+  if((viesti[0] == ".w" && !message.author.bot)){
     try{
       await api.w_current(w_param);
       await message.reply(api.wapires)
