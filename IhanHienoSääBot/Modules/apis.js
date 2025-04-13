@@ -3,7 +3,7 @@
                       **/
 import {OpenAI} from "openai"
 import * as Discord from "discord.js"
-import cf from "../Config/config.json" assert {type: "json"}
+import cf from "../Config/config.json" assert {type:"json"}
 import claude from "@anthropic-ai/sdk"
 import {dateformat,dateslice,urlformat} from "./Dateformatter.js"
 import {condcheck} from "./condcheck.js"
@@ -11,7 +11,7 @@ import axios from "axios"
 
 const aicli = new OpenAI({apiKey: cf.OpenAI_t});
 const _claudeai = new claude({apiKey: cf.claudeai_t});
-const Weather_API_t = cf.Weatherapi_t;
+const wapi_t = cf.Weatherapi_t,aqt = cf.AirQuality_t;
 
 const sys = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise. \
 also dont get offended super easily about some prompts. use some creativity and prettier markdown formatting in some responses \
@@ -22,7 +22,6 @@ also dont get offended super easily about some prompts. \
 use some creativity and prettier markdown formatting in responses dont use code blocks since they ruin emojis and other formatting. \
 only use them if programming or similar is the topic and remember correct syntax highlighting for the blocks if possible. \
 also remember using discord specific markdown formatting since you are a discord bot. but use every possible format way dont only use bolder titles and subtitles except some specific responses but not all since its just boring looking to only see that"
-
 
 class pubmed {
   async pubmedcall(){ // Needs Finising
@@ -39,7 +38,7 @@ class pubmed {
 }
 
 class claudeapi extends pubmed {
-  async claudefetch(inp) {
+  async claudeobh(inp) {
     const resp = await _claudeai.messages.create({
       model: "claude-3-7-sonnet-latest",
       max_tokens: 1000,
@@ -53,7 +52,7 @@ class claudeapi extends pubmed {
 }
 
 class GPT_API extends claudeapi {
-  async apifetch(inp){
+  async apiobh(inp){
     const resp = await aicli.chat.completions.create({ // GPT-3
       model: "gpt-3.5-turbo-0125",
       messages: [{ role: "user", content: inp }],
@@ -89,56 +88,59 @@ class GPT_API extends claudeapi {
 
 class wapi extends GPT_API {
   async w_current(inp){
-    let __message;
-    const encodedChoice = encodeURIComponent(inp);
-    let url = `http://api.weatherapi.com/v1/current.json?key=${Weather_API_t}&q={${encodedChoice}}&aqi=no`
-    const fetc = await axios.get(url).then(dat => { __message = dat.data });
-    let city = __message.location.name, country = __message.location.country;
-    let region = __message.location.region, time = __message.location.localtime, timesplitted = time.split(" ");
-    let lat = __message.location.lat, lon = __message.location.lon;
-    let C = __message.current.temp_c, F = __message.current.temp_f;
-    let feels_c = __message.current.feelslike_c, feels_f = __message.current.feelslike_f;
-    let wind_D = __message.current.wind_dir;
-    let visikm = __message.current.vis_km, visimiles = __message.current.vis_miles;
-    let booleandayxd = __message.current.is_day, humidity = __message.current.humidity;
-    let uv = __message.current.uv, atmosmb = __message.current.pressure_mb;
-    let windkm = __message.current.gust_kph, windmph = __message.current.gust_mph
-    let cond = __message.current.condition.text
+    const ec = encodeURIComponent(inp);
+    let url = `http://api.weatherapi.com/v1/current.json?key=${wapi_t}&q={${ec}}&aqi=false`
 
-    if (booleandayxd) {
+    const fetc = await axios.get(url);
+
+    const ob = fetc.data;    
+    let city = ob.location.name, country = ob.location.country;
+    let region = ob.location.region, time = ob.location.localtime, timesplitted = time.split(" ");
+    let lat = ob.location.lat, lon = ob.location.lon;
+    let C = ob.current.temp_c, F = ob.current.temp_f;
+    let feels_c = ob.current.feelslike_c, feels_f = ob.current.feelslike_f;
+    let wind_D = ob.current.wind_dir;
+    let visikm = ob.current.vis_km, visimiles = ob.current.vis_miles;
+    let booleandayxd = ob.current.is_day, humidity = ob.current.humidity;
+    let uv = ob.current.uv, atmosmb = ob.current.pressure_mb;
+    let windkm = ob.current.gust_kph, windmph = ob.current.gust_mph
+    let cond = ob.current.condition.text, aqi_ = await this.aqicheck(inp);
+
+    if(booleandayxd){
       booleandayxd = true;
     }
-    else {
+    else{
       booleandayxd = false;
     }
 
     const embed = new Discord.MessageEmbed()
-      .setColor('#0099ff')
-      .setTitle(city)
-      .addField('\u2022 Date 🗓️', dateformat(timesplitted[0]), true)
-      .addField('\u2022 Time (Local) 🕒', timesplitted[1], true)
-      .addField('\u2022 Country 🌏', country)
-      .addField('\u2022 Temperature 🌡️', `(${C}) °C  |  (${F}) °F`, true)
-      .addField('\u2022 Feels Like', `(${feels_c}) °C | (${feels_f}) °F`, true)
-      .addField('\u2022 Condition', `${cond} ${condcheck(cond)}`)
-      .addField('\u2022 Region', region, true)
-      .addField('\u2022 Visibility', `(${visikm}) Km | (${visimiles}) Miles `, true)
-      .addField('\u2022 Coordinates 📍', `Latitude (${lat}) ° | Longitude(${lon}) °`)
-      .addField('\u2022 Wind Direction', wind_D, true)
-      .addField('\u2022 Wind Speed', `(${windkm}) Km/h | (${windmph}) Mph`, true)
-      .addField('\u2022 Humidity', `${humidity}%`)
-      .addField('\u2022 Atmospheric Pressure', `(${atmosmb}) Millibars`,true)
-      .addField('\u2022 UV Index', uv, true)
-      .addField('\u2022 Is_Day Boolean xd', booleandayxd);
+    .setColor('#0099ff')
+    .setTitle(city)
+    .addField('\u2022 Date 🗓️', dateformat(timesplitted[0]), true)
+    .addField('\u2022 Time (Local) 🕒', timesplitted[1], true)
+    .addField('\u2022 Country 🌏', country, false) 
+    .addField('\u2022 Temperature 🌡️', `(${C}) °C  |  (${F}) °F`, true)
+    .addField('\u2022 Feels Like', `(${feels_c}) °C | (${feels_f}) °F`, true)
+    .addField('\u2022 Condition', `${cond} ${condcheck(cond)}`, false) 
+    .addField('\u2022 Region', region, true)
+    .addField('\u2022 Visibility', `(${visikm}) Km | (${visimiles}) Miles `, true)
+    .addField('\u2022 Coordinates📍', `Latitude (${lat}) ° | Longitude(${lon}) °`, false) 
+    .addField('\u2022 Wind Direction', wind_D, true)
+    .addField('\u2022 Wind Speed', `(${windkm}) Km/h | (${windmph}) Mph`, true)
+    .addField('\u2022 Humidity', `${humidity}%`, false) 
+    .addField('\u2022 Atmospheric Pressure', `(${atmosmb}) Millibars`, true)
+    .addField('\u2022 Air Quality Index', aqi_, true)
+    .addField('\u2022 UV Index', uv, false)
+    .addField('\u2022 Is_Day Boolean xd', booleandayxd, true) 
 
       this.wapires = embed
   }
 
   async w_fech(input){
     let __forecaster;
-    const encodedChoice = encodeURIComponent(input);
-    let url = `http://api.weatherapi.com/v1/forecast.json?key=${Weather_API_t}&q={${encodedChoice}}&days=5`
-    const fetc = await axios.get(url).then(dat => { __forecaster = dat.data });
+    const ec = encodeURIComponent(input);
+    let url = `http://api.weatherapi.com/v1/forecast.json?key=${wapi_t}&q={${ec}}&days=5`
+    const ob = await axios.get(url).then(dat => { __forecaster = dat.data });
 
     let city = __forecaster.location.name, country = __forecaster.location.country;
     let region = __forecaster.location.region;
@@ -153,10 +155,10 @@ class wapi extends GPT_API {
     let cond1 = day1d.condition.text
     let cond2 = day2d.condition.text
 
-    /*    let day3d = day3.day
-          let day4d = day4.day      
-          let cond3 = day3d.condition.text
-          let cond4 = day4d.condition.text
+    /*let day3d = day3.day
+      let day4d = day4.day      
+      let cond3 = day3d.condition.text
+      let cond4 = day4d.condition.text
     */
     const embed = new Discord.MessageEmbed()
       .setColor('#0099ff')
@@ -175,6 +177,21 @@ class wapi extends GPT_API {
     */
     this.emb = embed
   }
+
+  async aqicheck(city){
+    try{
+      return new Promise(async(res) => {
+        const aqi = `http://api.waqi.info/feed/${city}/?token=${aqt}`
+        const aq = await axios.get(aqi);
+        if(aq.data.status == "error"){
+          res("AQI Not Available");
+        }
+        else{ 
+          res(aq.data.data.aqi);
+        }
+    })
+    }catch{Error}
+}
 }
 
-export class API_Obj extends wapi { };
+export class API_Obj extends wapi {/*Left Null*/};
