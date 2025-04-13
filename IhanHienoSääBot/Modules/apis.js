@@ -38,7 +38,7 @@ class pubmed {
 }
 
 class claudeapi extends pubmed {
-  async claudeobh(inp) {
+  async claudefetch(inp) {
     const resp = await _claudeai.messages.create({
       model: "claude-3-7-sonnet-latest",
       max_tokens: 1000,
@@ -52,16 +52,16 @@ class claudeapi extends pubmed {
 }
 
 class GPT_API extends claudeapi {
-  async apiobh(inp){
+  async gpt3(inp){
     const resp = await aicli.chat.completions.create({ // GPT-3
       model: "gpt-3.5-turbo-0125",
       messages: [{ role: "user", content: inp }],
       temperature: 0.2
     }).then(respp => {
-        this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g, '\n').replace(/^(["]|\s|\\n|\.)*|["]$/g, '');
+        this.anws = JSON.stringify(respp.choices[0].message.content).replace(/\\n/g,'\n').replace(/^(["]|\s|\\n|\.)*|["]$/g, '');
         this.gpt3ans = `\`\`\`\n${this.anws}\n\`\`\``;
     })
-  }
+  } 
   async gpt4(inp){ // GPT-4
     const gpt4req = await aicli.chat.completions.create({
       model: "chatgpt-4o-latest",
@@ -131,9 +131,9 @@ class wapi extends GPT_API {
     .addField('\u2022 Atmospheric Pressure', `(${atmosmb}) Millibars`, true)
     .addField('\u2022 Air Quality Index', aqi_, true)
     .addField('\u2022 UV Index', uv, false)
-    .addField('\u2022 Is_Day Boolean xd', booleandayxd, true) 
+    .addField('\u2022 Is_Day Boolean xd', booleandayxd, true);
 
-      this.wapires = embed
+      this.wapires = embed;
   }
 
   async w_fech(input){
@@ -168,14 +168,14 @@ class wapi extends GPT_API {
       .addField(`\u2022 Condition: ${cond1} ${condcheck(cond1)}`, '\n')
       .addField(`\u2022 Date: ${dateslice(day2.date)} 🗓️ `, ' ')
       .addField(`\u2022 Min Temp ${day2d.mintemp_c}°C / Max Temp ${day2d.maxtemp_c}°C 🌡️`, ' ')
-      .addField(`\u2022 Condition: ${cond2} ${condcheck(cond2)}`, '\n')
+      .addField(`\u2022 Condition: ${cond2} ${condcheck(cond2)}`, '\n');
 
     /* Shit Api gives 2 day forecast only so need to find better one....
       .addField(`\u2022 Date: ${dateslice(day3.date)} 🗓️ `,' ')
       .addField(`\u2022 Min Temp ${day3d.mintemp_c}°C / Max Temp ${day3d.maxtemp_c}°C 🌡️`,' ')
       .addField(`\u2022 Condition: ${cond3} ${condcheck(cond3)}`,'\n')
     */
-    this.emb = embed
+    this.emb = embed;
   }
 
   async aqicheck(city){
