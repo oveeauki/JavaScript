@@ -9,8 +9,8 @@ import {dateformat,dateslice,urlformat} from "./Dateformatter.js"
 import {condcheck} from "./condcheck.js"
 import axios from "axios"
 
-const aicli = new OpenAI({apiKey: cf.OpenAI_t});
-const _claudeai = new claude({apiKey: cf.claudeai_t});
+const aicli = new OpenAI({apiKey:cf.OpenAI_t});
+const _claudeai = new claude({apiKey:cf.claudeai_t});
 const wapi_t = cf.Weatherapi_t,aqt = cf.AirQuality_t;
 
 const sys = "keep the answers semi brief under 2000 characters since it wont sent it in discord chat otherwise. \
@@ -42,7 +42,7 @@ class claudeapi extends pubmed {
     const resp = await _claudeai.messages.create({
       model: "claude-3-7-sonnet-latest",
       max_tokens: 1000,
-      messages: [{ role: "user", content: inp }],
+      messages: [{role:"user", content:inp}],
       system: sys_one,
       temperature: 1
     }).then(resp_ => {
@@ -79,7 +79,7 @@ class GPT_API extends claudeapi {
       model: "dall-e-3",
       prompt: inp,
       n: 1,
-      size: "1024x1024",
+      size: "1792x1024",
       quality:"hd"
     })
     this.dalle_l = dalle.data[0].url;
@@ -137,17 +137,17 @@ class wapi extends GPT_API {
   }
 
   async w_fech(input){
-    let __forecaster;
-    const ec = encodeURIComponent(input);
+    const fin = input.replace(/^f/i,"").trim();
+    const ec = encodeURIComponent(fin);
     let url = `http://api.weatherapi.com/v1/forecast.json?key=${wapi_t}&q={${ec}}&days=5`
-    const ob = await axios.get(url).then(dat => { __forecaster = dat.data });
+    const __forecaster = await axios.get(url);
+    const [aqd1,aqd2] = await this.aqiforecast(fin);
+    let city = __forecaster.data.location.name, country = __forecaster.data.location.country;
+    let region = __forecaster.data.location.region;
 
-    let city = __forecaster.location.name, country = __forecaster.location.country;
-    let region = __forecaster.location.region;
-
-    let day0 = __forecaster.forecast.forecastday[0], day1 = __forecaster.forecast.forecastday[1]
-    let day2 = __forecaster.forecast.forecastday[2], day3 = __forecaster.forecast.forecastday[3]
-    let day4 = __forecaster.forecast.forecastday[4]
+    let day0 = __forecaster.data.forecast.forecastday[0], day1 = __forecaster.data.forecast.forecastday[1]
+    let day2 = __forecaster.data.forecast.forecastday[2], day3 = __forecaster.data.forecast.forecastday[3]
+    let day4 = __forecaster.data.forecast.forecastday[4]
 
     let day0d = day0.day
     let day1d = day1.day
@@ -163,10 +163,10 @@ class wapi extends GPT_API {
     const embed = new Discord.MessageEmbed()
       .setColor('#0099ff')
       .setTitle(`${country},${city}`)
-      .addField(`\u2022 Date: ${dateslice(day1.date)} 🗓️`, ' ')
+      .addField(`\u2022 Date: ${dateslice(day1.date)} 🗓️ AQi ~(${aqd1})`, ' ')
       .addField(`\u2022 Min Temp ${day1d.mintemp_c}°C / Max Temp ${day1d.maxtemp_c}°C 🌡️`, ' ')
       .addField(`\u2022 Condition: ${cond1} ${condcheck(cond1)}`, '\n')
-      .addField(`\u2022 Date: ${dateslice(day2.date)} 🗓️ `, ' ')
+      .addField(`\u2022 Date: ${dateslice(day2.date)} 🗓️ AQi ~(${aqd2})`, ' ')
       .addField(`\u2022 Min Temp ${day2d.mintemp_c}°C / Max Temp ${day2d.maxtemp_c}°C 🌡️`, ' ')
       .addField(`\u2022 Condition: ${cond2} ${condcheck(cond2)}`, '\n');
 
@@ -175,7 +175,7 @@ class wapi extends GPT_API {
       .addField(`\u2022 Min Temp ${day3d.mintemp_c}°C / Max Temp ${day3d.maxtemp_c}°C 🌡️`,' ')
       .addField(`\u2022 Condition: ${cond3} ${condcheck(cond3)}`,'\n')
     */
-    this.emb = embed;
+    this.emb = embed
   }
 
   async aqicheck(city){
@@ -184,13 +184,30 @@ class wapi extends GPT_API {
         const aqi = `http://api.waqi.info/feed/${city}/?token=${aqt}`
         const aq = await axios.get(aqi);
         if(aq.data.status == "error"){
-          res("AQI Not Available");
+          res("No Data");
         }
         else{ 
           res(aq.data.data.aqi);
         }
     })
-    }catch{Error}
+      }catch{Error}
+}
+
+  async aqiforecast(city){
+    try{
+      return new Promise(async(res) => {
+        const aqi = `http://api.waqi.info/feed/${city}/?token=${aqt}`
+        const aq = await axios.get(aqi);
+        if(aq.data.status == "error"){
+          res(["No Data","No Data"]);
+        }
+        else{
+          const d1dat = aq.data.data.forecast.daily.pm25[0].avg;
+          const d2dat = aq.data.data.forecast.daily.pm25[1].avg;
+          res([d1dat,d2dat]);
+        }
+    })
+      }catch{Error}
 }
 }
 
