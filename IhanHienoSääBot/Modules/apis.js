@@ -143,26 +143,18 @@ class wapi extends GPT_API {
     const __forecaster = await axios.get(url);
     const [aqd1,aqd2] = await this.aqiforecast(fin);
     let city = __forecaster.data.location.name, country = __forecaster.data.location.country;
-    let region = __forecaster.data.location.region;
 
-    let day0 = __forecaster.data.forecast.forecastday[0], day1 = __forecaster.data.forecast.forecastday[1]
-    let day2 = __forecaster.data.forecast.forecastday[2], day3 = __forecaster.data.forecast.forecastday[3]
-    let day4 = __forecaster.data.forecast.forecastday[4]
+    let day1 = __forecaster.data.forecast.forecastday[1]
+    let day2 = __forecaster.data.forecast.forecastday[2]
 
-    let day0d = day0.day
     let day1d = day1.day
     let day2d = day2.day
     let cond1 = day1d.condition.text
     let cond2 = day2d.condition.text
 
-    /*let day3d = day3.day
-      let day4d = day4.day      
-      let cond3 = day3d.condition.text
-      let cond4 = day4d.condition.text
-    */
     const embed = new Discord.MessageEmbed()
       .setColor('#0099ff')
-      .setTitle(`${country},${city}`)
+      .setTitle(`${country}, ${city}`)
       .addField(`\u2022 Date: ${dateslice(day1.date)} 🗓️ AQi ~(${aqd1})`, ' ')
       .addField(`\u2022 Min Temp ${day1d.mintemp_c}°C / Max Temp ${day1d.maxtemp_c}°C 🌡️`, ' ')
       .addField(`\u2022 Condition: ${cond1} ${condcheck(cond1)}`, '\n')
@@ -170,12 +162,7 @@ class wapi extends GPT_API {
       .addField(`\u2022 Min Temp ${day2d.mintemp_c}°C / Max Temp ${day2d.maxtemp_c}°C 🌡️`, ' ')
       .addField(`\u2022 Condition: ${cond2} ${condcheck(cond2)}`, '\n');
 
-    /* Shit Api gives 2 day forecast only so need to find better one....
-      .addField(`\u2022 Date: ${dateslice(day3.date)} 🗓️ `,' ')
-      .addField(`\u2022 Min Temp ${day3d.mintemp_c}°C / Max Temp ${day3d.maxtemp_c}°C 🌡️`,' ')
-      .addField(`\u2022 Condition: ${cond3} ${condcheck(cond3)}`,'\n')
-    */
-    this.emb = embed
+      this.emb = embed
   }
 
   async aqicheck(city){
