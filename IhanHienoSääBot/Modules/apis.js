@@ -8,6 +8,7 @@ import claude from "@anthropic-ai/sdk"
 import {dateformat,dateslice,urlformat} from "./Dateformatter.js"
 import {condcheck} from "./condcheck.js"
 import axios from "axios"
+import {fetch} from "./Wiki/psy.js"
 
 const aicli = new OpenAI({apiKey:cf.OpenAI_t});
 const _claudeai = new claude({apiKey:cf.claudeai_t});
@@ -23,7 +24,16 @@ use some creativity and prettier markdown formatting in responses dont use code 
 only use them if programming or similar is the topic and remember correct syntax highlighting for the blocks if possible. \
 also remember using discord specific markdown formatting since you are a discord bot. but use every possible format way dont only use bolder titles and subtitles except some specific responses but not all since its just boring looking to only see that"
 
-class pubmed {
+class psywikiapi{
+  async embedwiki(substance){
+    const ret = await fetch(substance);
+    let embd = new Discord.MessageEmbed()
+    .addField(ret," ");
+    return(embd); 
+  }
+}
+
+class pubmed extends psywikiapi {
   async pubmedcall(){ // Needs Finising
     const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${comp}/`
     const res = await ax.get(url);
