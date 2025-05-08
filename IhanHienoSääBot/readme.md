@@ -11,6 +11,7 @@ import cf from "../Config/config.json" assert {type:"json"}
 <li>Weather API fetch for current weather & forecast (2 days only bc free limit)</li>
 <li>PubMed Chemical Api for fetching images of organic,inorganic etc molecules. (Still partly in progress)</li>
 <li>OpenSSl library for Cryptographic hashing. (Still in progress)</li>
+<li> PsychonautWiki API for psychoactives query (Still in progress) </li>
 </ul>
 
 ### More is to come later on!
