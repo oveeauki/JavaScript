@@ -14,7 +14,8 @@ import {hashopt,help} from "../Modules/help.js"
 
 const client = new Discord.Client();
 
-var prfx = "!";
+var pfx1 = "!"
+var pfx2 = "."
 
 client.login(cf.discord_t);
 
@@ -61,7 +62,7 @@ client.once("ready",async() => {
 
 client.on("message",async(message) => {
   const api = new API_Obj();
-  const msgfinal = message.content.replace(/[!.]/i,"")
+  const msgfinal = message.content.replace(/^[!.]/i,"")
                                   .trim()
                                   .toLowerCase();
   const opts = ["gpt4","dalle","cld"]
@@ -71,17 +72,38 @@ client.on("message",async(message) => {
   const hexparser = /^0x[0-9a-fA-F]+$/;
  /*----------------------------------------------------------------------------------------*/
 
-  // Help For Channel
-  if((message.content.startsWith(".") && msgfinal.startsWith("help")) && !message.author.bot){
-    const embd = help();
-    await message.reply(embd);
-  }
-  else if(message.channel.type == "dm" && !message.author.bot){
-    const embd = help();
-    await message.reply(embd);
+  if((message.content.startsWith(pfx2) && msgfinal.includes("pwiki")) && !message.author.bot){
+    try{
+      const in_ = msgfinal.replace(/^pwiki/i,"").trim();
+      const wikie = await api.embedwiki(in_);
+      await message.reply(wikie);
+    }catch{Error}
   }
 
-  if((message.content.startsWith(".") && msgfinal.includes("crc32")) && !message.author.bot){
+  if(message.content.startsWith(pfx2) && (msgfinal.includes("ban") && message.author.id == myid)){
+    try{
+      const reason_ = message.content.split(' ').slice(2).join(' ') || 'No reason provided';
+      const userToBan = message.mentions.users.first();
+      const memberToBan = message.guild.member(userToBan);
+      await memberToBan.ban({reason:reason_});
+      await message.reply(`Banned ${memberToBan.user.username} <:xIc:1090089641392214026> With a Reason "${reason_}" <:xIc:1090089641392214026> `)
+    }catch{Error};
+  }
+  // Help For Channel
+  if((message.content.startsWith(pfx2) && msgfinal.startsWith("help")) && !message.author.bot){
+    try{
+      const embd = help();
+      await message.reply(embd);
+    }catch{Error}
+  }
+  else if(message.channel.type == "dm" && !message.author.bot){
+    try{
+      const embd = help();
+      await message.reply(embd);
+    }catch{Error}
+  }
+
+  if((message.content.startsWith(pfx2) && msgfinal.includes("crc32")) && !message.author.bot){
     try{
       message.channel.startTyping();
       const [a,b,c] = msgfinal.replace(/crc32/i,'').trim().split(" ");
@@ -92,7 +114,7 @@ client.on("message",async(message) => {
     }catch{Error}
   }
 
-  if((message.content.startsWith(".") && msgfinal.includes("xor")) && !message.author.bot){
+  if((message.content.startsWith(pfx2) && msgfinal.includes("xor")) && !message.author.bot){
     try{
       const [str,key] = msgfinal.replace(/xor/i,'').trim().split(" ");
       if(hexparser.test(key)){
@@ -109,7 +131,7 @@ client.on("message",async(message) => {
   }
 
 /*--------------------------------PubChem API----------------------------------------------*/
-  if((message.content.startsWith(".") && msgfinal.includes("pstr")) && !message.author.bot){
+  if((message.content.startsWith(pfx2) && msgfinal.includes("pstr")) && !message.author.bot){
     try{
       const shit = msgfinal.replace(/pstr/i,'').trim();
       await api.pubmedimage(shit);
@@ -121,7 +143,7 @@ client.on("message",async(message) => {
 }
 
 /*--------------------------------Message Channel BulkDelete----------------------------------------*/
-  if((message.content.startsWith(".") && msgfinal.includes("delete")) && message.author.id == myid){
+  if((message.content.startsWith(pfx2) && msgfinal.includes("delete")) && message.author.id == myid){
     try{
       const parsed = message.content.match(/\d+/);
       const int = parseInt(parsed);
@@ -132,8 +154,20 @@ client.on("message",async(message) => {
   else if(message.content.startsWith(".") && msgfinal.includes("delete") && message.author.id !== myid){
     await message.reply("<:bro:968649274281840640>")
   }
+
+/*--------------------Claude Ai-------------------------------------------------------------*/
+  if((message.content.startsWith(pfx1) && msgfinal.startsWith("cld")) && message.content.length > 2){
+    const shit = msgfinal.replace(/cld/i,'');
+    message.channel.startTyping();
+    try{
+      await api.claudefetch(shit);
+      await message.reply(api.cldans);
+    }catch{Error} 
+    message.channel.stopTyping();
+  }
+
 /* ----------------------- Open Ai API DALL-E --------------------------------------------------------------- */
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
+  if((message.content.startsWith(pfx1) && msgfinal.startsWith("dalle")) && _timer.dallecount <= 2){
     _timer.dallecount++;
     const shit = msgfinal.replace(/dalle/i,'').trim();
     message.channel.startTyping();
@@ -148,37 +182,26 @@ client.on("message",async(message) => {
       }catch{Error} 
     message.channel.stopTyping();
   }
-  else if((message.content.startsWith(prfx) && msgfinal.startsWith("dalle")) && (_timer.dallecount > 2 && !message.author.bot)){
+  else if((message.content.startsWith(pfx1) && msgfinal.startsWith("dalle")) && (_timer.dallecount > 2 && !message.author.bot)){
     const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
     await message.reply(msg).then(msg => msg.delete({timeout:10000}))
   }
-/*----------------------------------------------------------------------------------------------*/
 
-/*--------------------Claude Ai-------------------------------------------------------------*/
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("cld")) && message.content.length > 2){
-    const shit = msgfinal.replace(/cld/i,'');
-    message.channel.startTyping();
-    try{
-      await api.claudefetch(shit);
-      await message.reply(api.cldans);
-    }catch{Error} 
-    message.channel.stopTyping();
-  }
 /* ----------------------- Open Ai API GPT3 --------------------------------------------------------------- */
-  if((message.content.startsWith(prfx) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
+  if((message.content.startsWith(pfx1) && !opts.some(opt => msgfinal.startsWith(opt))) && message.content.length > 2){
     message.channel.startTyping();
       try{
-        await api.apifetch(msgfinal);
+        await api.gpt3(msgfinal);
         await message.reply(api.gpt3ans);
       }catch{Error} 
       message.channel.stopTyping();
   }
-  else if((message.content.startsWith(prfx) && !message.author.bot) && message.content.length <= 1){
+  else if((message.content.startsWith(pfx1) && !message.author.bot) && message.content.length <= 1){
     await message.reply("<:joo:1039729807933579274>");
   }
 
 /* ----------------------- Open Ai API GPT4 --------------------------------------------------------------- */
-  if((message.content.startsWith(prfx) && msgfinal.startsWith("gpt4")) && !message.author.bot){
+  if((message.content.startsWith(pfx1) && msgfinal.startsWith("gpt4")) && !message.author.bot){
     const shit = msgfinal.replace(/gpt4/i,'').trim();
     message.channel.startTyping();
     try{
@@ -188,7 +211,7 @@ client.on("message",async(message) => {
     message.channel.stopTyping();
   }
 /* -------------------------- Hashing ----------------------------------- */
-  if((message.content.startsWith(".") && msgfinal.startsWith("hash")) && !message.author.bot){
+  if((message.content.startsWith(pfx2) && msgfinal.startsWith("hash")) && !message.author.bot){
     const parsed = msgfinal.replace(/hash/i,"").trim();
     const hssplit = parsed.split(" ");
     switch(parsed){
