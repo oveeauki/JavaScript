@@ -1,4 +1,4 @@
-// Could be implemented easier with GPT function call to return emoji based on input
+// To do: implement easier with GPT function call to return emoji based on input. erasing this messy cluttery crap
 
 export function condcheck(cond){
   const jo = cond.trim();
