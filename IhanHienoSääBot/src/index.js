@@ -1,6 +1,8 @@
 /**
 @author 0xFreDi
 @description HienoSääBotti rewritten index file
+@todo add chunk splitter as 2nd optional condition 
+bc of message max length in discord api
                                                 **/
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
