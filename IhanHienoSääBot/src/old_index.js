@@ -1,9 +1,7 @@
 /**
 @author 0xFreDi
-@description HienoSääBotti Main
-@todo add chunk splitter as 2nd optional condition 
-bc of message max length in discord api
-                                                **/
+@description HienoSääBotti old&obsolete index remaining just as backup
+                                                                      **/
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import crypto from "node:crypto" 
