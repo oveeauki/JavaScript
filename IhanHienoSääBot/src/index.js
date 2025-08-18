@@ -66,8 +66,6 @@ client.on("message",async(message) => {
   const msgfinal = message.content.replace(/^[!.]/i,"")
                                   .trim()
                                   .toLowerCase();
-  const opts = ["gpt4","dalle","cld"]
-  let viesti = message.content.toLowerCase().split(" ");
   const myid = "300648311067508754";
   const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
   const hexparser = /^0x[0-9a-fA-F]+$/;
