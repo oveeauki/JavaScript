@@ -5,7 +5,7 @@
 // Remember to modify the code accordingly for your config
 import cf from "../Config/config.json" assert {type:"json"}
 ```
-#### The Bot has atm
+#### This bot is the biggest ongoing single project i have done so far. Atm it includes stuff like...
 <ul>
 <li>AI Model Support for OpenAI(Dalle,GPT-3,GPT-4o) And Anthropics Claude Models</li>
 <li>Weather API fetch for current weather & forecast (2 days only bc free limit)</li>
