@@ -1,9 +1,10 @@
 /**
 @author 0xFreDi
-@description HienoSääBotti rewritten index file
-@todo add chunk splitter as 2nd optional condition 
-bc of message max length in discord api
-                                                **/
+@description HienoSääBotti Main
+@todo - add chunk splitter as 2nd optional condition 
+      bc of message max length in discord api.
+      - LOOK IN max message embed len
+                                                      **/
 import * as Discord from "discord.js"
 import cf from "../Config/config.json" assert {type:"json"}
 import crypto from "node:crypto" 
@@ -16,8 +17,7 @@ const client = new Discord.Client();
 const api = new API_Obj();
 const algs = new algos();
 
-var pfx1 = "!"
-var pfx2 = "."
+var pfx1 = "!", pfx2 = "."
 
 client.login(cf.discord_t);
 
@@ -69,15 +69,16 @@ client.on("message",async(message) => {
   const myid = "300648311067508754";
   const w_param = msgfinal.replace(/^(w\s+|weather\s*)/i,'').trim();
   const hexparser = /^0x[0-9a-fA-F]+$/;
+  const spltfinal = msgfinal.split(" ");
  /*----------------------------------------------------------------------------------------*/
-  
+
   if(message.content.startsWith(pfx1) && !message.author.bot){
-    const j = msgfinal.split(" ");
-    switch(j[0]){
+    switch(spltfinal[0]){
       case "gpt3":
+        const s = msgfinal.replace(/gpt3/i,'').trim();
          message.channel.startTyping();
         try{
-          await api.gpt3(msgfinal);
+          await api.gpt3(s);
           await message.reply(api.gpt3ans);
        }catch{Error} 
           message.channel.stopTyping();
@@ -91,14 +92,10 @@ client.on("message",async(message) => {
        }catch{Error} 
           message.channel.stopTyping();
           break;
-
-      case "dalle":
+          case "dalle":
         try{
+          if(_timer.dallecount <= 2 && !message.author.bot){
           _timer.dallecount++;
-          if(_timer.dallecount > 2 && !message.author.bot){
-            const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
-            await message.reply(msg).then(msg => msg.delete({timeout:10000}))
-          }
           const da = msgfinal.replace(/dalle/i,'').trim();
           message.channel.startTyping();
               await api.dall_e(da);
@@ -108,6 +105,11 @@ client.on("message",async(message) => {
                 name:"image.png"
             }] 
         });
+          }
+        else if(_timer.dallecount > 2 && !message.author.bot){
+            const msg = `Max 3 Image limit. [${(60-_timer.mins)}] Mins left for reset...`;
+            await message.reply(msg).then(msg => msg.delete({timeout:10000}))
+          }
         }catch{Error} 
         message.channel.stopTyping();
         break;
@@ -124,14 +126,19 @@ client.on("message",async(message) => {
       }
   }
 
-
   else if(message.content.startsWith(pfx2) && !message.author.bot){
-    const j = msgfinal.split(" "); 
-    switch(j[0]){
+    switch(spltfinal[0]){
+      case "btshift":
+        const in_ = msgfinal.replace(/btshift/gi,"").trim().split(" ");
+        const res = await algs.bitshift(in_);
+        await message.reply(res);
+      break;
+
       case "ucode":
         try{
           const in_ = msgfinal.replace(/^ucode/i,"").trim().split(" ");
           const res = await algs.ucharprint(in_,hexparser);
+         // LOOK IN max message embed len const ea = new Discord.MessageEmbed(res);
           await message.reply(res);
       }catch{Error}
       break;
@@ -140,7 +147,8 @@ client.on("message",async(message) => {
     try{
       const in_ = msgfinal.replace(/^pwiki/i,"").trim();
       const wikie = await api.embedwiki(in_);
-      await message.reply(wikie);
+      const msgbox = `\`\`\`\n${wikie}\n\`\`\``;
+      await message.reply(msgbox);
     }catch{Error}
     break;
   
