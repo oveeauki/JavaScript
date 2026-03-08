@@ -1,23 +1,32 @@
 /**
 @desc User Help
                 */
-import Discord from "discord.js"
+import {MessageEmbed} from "discord.js"
 import {exec} from "child_process"
 
 const helpmsg = "\
-\n  Commands use prefix (!) for everything except weather commands (.)\
-\n  (input) GPT 3.5\
-\n  gpt4 (GPT-4o)\
-\n  cld (Claude 3.8+)\
-\n  dalle (dalle image model)\
-\n  hash (algo) (input)\
-\n .w (location) current weather\
-\n .f (location) weather forecast for 2 days\n"
+\nCommands use prefix (!) for Ai stuff and (.) for all other stuff\
+\ngpt3 (GPT-3.5)\
+\ngpt4 (Picks automatically model based of input)\
+\ncld (Claude 4.0+)\
+\nucode input in hexrange format eg.(0xXXX - 0xXXX)\
+\npstr (chemical) 2D MolView\
+\npwiki (substance) PsychonautWiki\n";
+
+const helpmsg1 = "\
+\nxor (Key in Hex form (0x..) (input)\
+\nbitshifting (shift (Hex >> int) or (shift (Hex << int))\
+\nAND mask e.g(int & anotherint)\
+\ndalle (inp) (dalle image model)\
+\nhash (algo) (input)\
+\nw (location) current weather\
+\nf (location) forecast\n"
 
 export function help(){
-  let embd = new Discord.MessageEmbed()
-  .addField(helpmsg," ");
-  return(embd);
+  let embd = new MessageEmbed()
+  .addField(helpmsg," ")
+  .addField(helpmsg1," ");
+  return(embd); 
 }
 
 export async function hashopt(){
@@ -32,5 +41,5 @@ export async function hashopt(){
         res(stderr); 
       }
     })
-})
+  })
 }
