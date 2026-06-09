@@ -2,7 +2,7 @@
 
 #### Replace the config import in the **Modules/apis.js** & **Src/index.js** 
 ```js
-// Remember to modify the code accordingly for your config
+// Remember to modify code accordingly for your config
 import cf from "../Config/config.json" assert {type:"json"}
 ```
 #### This bot is the biggest ongoing single project i have done so far. Atm it includes stuff like...
